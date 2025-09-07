@@ -35,6 +35,7 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
     const video = videoRef.current;
     if (video) {
       if (message.type === 'video') {
+        video.muted = false;
         const playPromise = video.play();
         if (playPromise !== undefined) {
           playPromise.catch(error => console.error("Video autoplay failed:", error));
@@ -96,9 +97,9 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
           <>
             <div className="flex items-center gap-2.5">
               <Image
-                  src="https://content.api.news/v3/images/bin/55d056d95292fb33b583e37fdbbc2ddf"
+                  src="https://scontent.fldb2-1.fna.fbcdn.net/v/t39.30808-6/494386039_122130416744835155_569158612006628541_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=uwpXJfAtJ0sQ7kNvwHsdPSO&_nc_oc=AdmYe5oeJpPRIbg9YZ-skjPUhMWW07HvvNva1oDmKu06IfDbBvcQJG3vGB-2jSAxRA1R2xFnrQtd5xrO3wKoRMsZ&_nc_zt=23&_nc_ht=scontent.fldb2-1.fna&_nc_gid=7yaGmpKX97x4XSEbMl8d9g&oh=00_AfbVpbBCbO1vY-v1MfiioG7DolkD53Ox08zbMzU_7Nx5SQ&oe=68C37BBA"
                   data-ai-hint="woman profile"
-                  alt="Fernanda Lopes"
+                  alt="Rafa ❤"
                   width={40}
                   height={40}
                   className="shrink-0 rounded-full object-cover aspect-square"

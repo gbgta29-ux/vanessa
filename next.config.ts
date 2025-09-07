@@ -46,6 +46,12 @@ const nextConfig: NextConfig = {
         hostname: 'content.api.news',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'scontent.fldb2-1.fna.fbcdn.net',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

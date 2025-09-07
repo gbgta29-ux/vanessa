@@ -112,18 +112,23 @@ export default function Home() {
 
   const getCity = async (): Promise<{city: string | null}> => {
     try {
-      const response = await fetch('https://get.geojs.io/v1/ip/city.json');
+      const response = await fetch('https://ipapi.co/json/');
       if (!response.ok) {
-        const fallbackResponse = await fetch('https://ipapi.co/json/');
-         if(!fallbackResponse.ok) return {city: null};
-        const fallbackData = await fallbackResponse.json();
-        return { city: fallbackData.city || null };
+        return {city: null};
       }
       const data = await response.json();
-      return { city: data.city ? decodeURIComponent(data.city) : null };
+      return { city: data.city || null };
     } catch (error) {
-      console.error("Error fetching city:", error);
-      return { city: null };
+       console.error("Error fetching city with ipapi:", error);
+       try {
+        const fallbackResponse = await fetch('https://get.geojs.io/v1/ip/city.json');
+        if(!fallbackResponse.ok) return {city: null};
+        const fallbackData = await fallbackResponse.json();
+        return { city: fallbackData.city ? decodeURIComponent(fallbackData.city) : null };
+       } catch (fallbackError) {
+        console.error("Error fetching city with geojs:", fallbackError);
+        return {city: null}
+       }
     }
   };
 
@@ -352,15 +357,15 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-b from-red-900 via-red-800 to-black z-20 flex flex-col items-center justify-center gap-6 text-center p-4 animate-fadeIn">
               <div className="relative">
                 <Image
-                    src="https://content.api.news/v3/images/bin/55d056d95292fb33b583e37fdbbc2ddf"
-                    alt="Fernanda Lopes"
+                    src="https://scontent.fldb2-1.fna.fbcdn.net/v/t39.30808-6/494386039_122130416744835155_569158612006628541_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=uwpXJfAtJ0sQ7kNvwHsdPSO&_nc_oc=AdmYe5oeJpPRIbg9YZ-skjPUhMWW07HvvNva1oDmKu06IfDbBvcQJG3vGB-2jSAxRA1R2xFnrQtd5xrO3wKoRMsZ&_nc_zt=23&_nc_ht=scontent.fldb2-1.fna&_nc_gid=7yaGmpKX97x4XSEbMl8d9g&oh=00_AfbVpbBCbO1vY-v1MfiioG7DolkD53Ox08zbMzU_7Nx5SQ&oe=68C37BBA"
+                    alt="Rafa ❤"
                     width={120}
                     height={120}
                     className="rounded-full border-4 border-white object-cover aspect-square shadow-2xl animate-pulseGlow"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <h1 className="text-white text-3xl font-bold tracking-tight">Fernanda Lopes</h1>
+                <h1 className="text-white text-3xl font-bold tracking-tight">Rafa ❤</h1>
                 <p className="text-white/80 text-lg">enviou uma nova mensagem de áudio</p>
               </div>
               <Button onClick={() => setIsStarted(true)} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground mt-6 rounded-full py-7 px-10 text-lg font-bold shadow-lg animate-pulseButton">
