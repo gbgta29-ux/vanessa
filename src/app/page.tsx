@@ -16,13 +16,9 @@ import { track as fpixelTrack } from '@/lib/fpixel';
 
 type FlowStep =
   | 'initial'
-  | 'awaiting_photo_permission'
-  | 'awaiting_name'
-  | 'awaiting_user_city'
-  | 'awaiting_second_photo_permission'
-  | 'awaiting_after_second_photo'
-  | 'awaiting_chupar_ou_fuder'
-  | 'awaiting_video_permission'
+  | 'awaiting_game_permission'
+  | 'awaiting_state'
+  | 'awaiting_peitinhos_response'
   | 'awaiting_call_permission'
   | 'awaiting_pix_permission'
   | 'awaiting_pix_generation'
@@ -41,7 +37,7 @@ export default function Home() {
   const [showInput, setShowInput] = useState(false);
   const [flowStep, setFlowStep] = useState<FlowStep>('initial');
   const [userName, setUserName] = useState('');
-  const [userCity, setUserCity] = useState('');
+  const [userState, setUserState] = useState('');
   const [isCreatingPix, setIsCreatingPix] = useState(false);
   const [isCheckingPayment, setIsCheckingPayment] = useState(false);
   const [pixData, setPixData] = useState<PixChargeData | null>(null);
@@ -110,38 +106,37 @@ export default function Home() {
       setIsLoading(false);
   };
 
-  const getCity = async (): Promise<{city: string | null}> => {
-    try {
-      const response = await fetch('https://ipapi.co/json/');
-      if (!response.ok) {
-        return {city: null};
-      }
-      const data = await response.json();
-      return { city: data.city || null };
-    } catch (error) {
-       console.error("Error fetching city with ipapi:", error);
-       try {
-        const fallbackResponse = await fetch('https://get.geojs.io/v1/ip/city.json');
-        if(!fallbackResponse.ok) return {city: null};
-        const fallbackData = await fallbackResponse.json();
-        return { city: fallbackData.city ? decodeURIComponent(fallbackData.city) : null };
-       } catch (fallbackError) {
-        console.error("Error fetching city with geojs:", fallbackError);
-        return {city: null}
-       }
-    }
-  };
+  const getCapital = (state: string): string | null => {
+    const stateCapitals: { [key: string]: string } = {
+        'acre': 'Rio Branco', 'alagoas': 'Maceió', 'amapá': 'Macapá', 'amazonas': 'Manaus',
+        'bahia': 'Salvador', 'ceará': 'Fortaleza', 'distrito federal': 'Brasília',
+        'espírito santo': 'Vitória', 'goiás': 'Goiânia', 'maranhão': 'São Luís',
+        'mato grosso': 'Cuiabá', 'mato grosso do sul': 'Campo Grande', 'minas gerais': 'Belo Horizonte',
+        'pará': 'Belém', 'paraíba': 'João Pessoa', 'paraná': 'Curitiba', 'pernambuco': 'Recife',
+        'piauí': 'Teresina', 'rio de janeiro': 'Rio de Janeiro', 'rio grande do norte': 'Natal',
+        'rio grande do sul': 'Porto Alegre', 'rondônia': 'Porto Velho', 'roraima': 'Boa Vista',
+        'santa catarina': 'Florianópolis', 'são paulo': 'São Paulo', 'sergipe': 'Aracaju', 'tocantins': 'Palmas',
+        'ac': 'Rio Branco', 'al': 'Maceió', 'ap': 'Macapá', 'am': 'Manaus', 'ba': 'Salvador',
+        'ce': 'Fortaleza', 'df': 'Brasília', 'es': 'Vitória', 'go': 'Goiânia', 'ma': 'São Luís',
+        'mt': 'Cuiabá', 'ms': 'Campo Grande', 'mg': 'Belo Horizonte', 'pa': 'Belém', 'pb': 'João Pessoa',
+        'pr': 'Curitiba', 'pe': 'Recife', 'pi': 'Teresina', 'rj': 'Rio de Janeiro', 'rn': 'Natal',
+        'rs': 'Porto Alegre', 'ro': 'Porto Velho', 'rr': 'Boa Vista', 'sc': 'Florianópolis',
+        'sp': 'São Paulo', 'se': 'Aracaju', 'to': 'Palmas'
+    };
+    return stateCapitals[state.toLowerCase()] || null;
+  }
 
   useEffect(() => {
     const runWelcomeFlow = async () => {
       await showLoadingIndicator(1500, "Gravando áudio...");
-      await playAudioSequence(1, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-1.mp3');
-      await playAudioSequence(2, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-2.mp3');
+      await playAudioSequence(1, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/a.mp3');
+      await playAudioSequence(2, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/b.mp3');
+      await playAudioSequence(3, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/c.mp3');
 
       await showLoadingIndicator(1500);
-      addMessage({ type: 'text', text: "posso enviar uma fotinha bb???" }, 'bot');
+      addMessage({ type: 'text', text: "bora jogar esse joguinho, amor ?" }, 'bot');
       setShowInput(true);
-      setFlowStep('awaiting_photo_permission');
+      setFlowStep('awaiting_game_permission');
     };
 
     if (isStarted) {
@@ -154,7 +149,7 @@ export default function Home() {
     setIsCreatingPix(true);
     if (!isUpsell) {
         await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(17, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/zanam1atwtdp2u0wk192fa0x.mp3');
+        await playAudioSequence(13, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/m.mp3');
     }
     
     const charge = await createPixCharge(value);
@@ -235,105 +230,61 @@ export default function Home() {
     await showLoadingIndicator(1500);
 
     switch (flowStep) {
-      case 'awaiting_photo_permission':
-        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/115bf82a-e093-48ba-81dc-7044ed489ee1.jpg' }, 'bot');
-        await showLoadingIndicator(5000, "Gravando áudio...");
-        await playAudioSequence(3, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-3.mp3');
-        await playAudioSequence(4, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-4.mp3');
+      case 'awaiting_game_permission':
+        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/@ItsOnlyy-on-Telegram-212-scaled.jpg' }, 'bot');
         await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "qual o seu nome safado ??? ❤" }, 'bot');
+        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/a4ebc6e9-ba75-4a2d-a5ea-a498896ab9d4.jpg' }, 'bot');
+        await showLoadingIndicator(1500, "Gravando áudio...");
+        await playAudioSequence(4, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/d.mp3');
+        await playAudioSequence(5, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/e.mp3');
+        await playAudioSequence(6, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/f.mp3');
+        await showLoadingIndicator(1500);
+        addMessage({ type: 'text', text: "em qual estado você mora bb ?" }, 'bot');
         setShowInput(true);
-        setFlowStep('awaiting_name');
+        setFlowStep('awaiting_state');
         break;
 
-      case 'awaiting_name':
-        setUserName(userMessageText);
-        addMessage({ type: 'text', text: `${userMessageText}, nome de homem gostoso hehe 🔥😋` }, 'bot');
-        await showLoadingIndicator(1500);
-        const { city: currentCity } = await getCity();
-        if (currentCity) {
-            addMessage({ type: 'text', text: `eu moro em ${currentCity}, gostoso,` }, 'bot');
+      case 'awaiting_state':
+        setUserState(userMessageText);
+        const capital = getCapital(userMessageText);
+        if (capital) {
+            addMessage({ type: 'text', text: `ah que legal bb, moro no ${userMessageText} também, na cidade de ${capital}, a gente mora pertinho então;` }, 'bot');
         } else {
-            addMessage({ type: 'text', text: 'eu moro no Brasil, gostoso,' }, 'bot');
+            addMessage({ type: 'text', text: `ah que legal bb, moro em ${userMessageText} também, a gente mora pertinho então;` }, 'bot');
         }
+        await showLoadingIndicator(1500, "Gravando áudio...");
+        await playAudioSequence(7, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/g.mp3');
         await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "e você bb, de que cidade você é ?" }, 'bot');
+        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/Design-sem-nome-54.jpg' }, 'bot');
+        await showLoadingIndicator(1500, "Gravando áudio...");
+        await playAudioSequence(8, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/h.mp3');
+        await playAudioSequence(9, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/i.mp3');
+        await showLoadingIndicator(1500);
+        addMessage({ type: 'text', text: "você gostou dos meus peitinhos safado ? 💗" }, 'bot');
         setShowInput(true);
-        setFlowStep('awaiting_user_city');
+        setFlowStep('awaiting_peitinhos_response');
         break;
 
-      case 'awaiting_user_city':
-        setUserCity(userMessageText);
-        addMessage({ type: 'text', text: `ahh eu gosto muito de ${userMessageText}. gostei de saber que você mora perto de mim rsrs 😊🔥` }, 'bot');
+      case 'awaiting_peitinhos_response':
         await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(5, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-5.mp3');
-        await playAudioSequence(6, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-6.mp3');
+        await playAudioSequence(10, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/j.mp3');
         await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "posso mandar outra fotinha ?" }, 'bot');
-        setShowInput(true);
-        setFlowStep('awaiting_second_photo_permission');
-        break;
-
-      case 'awaiting_second_photo_permission':
-        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/safaaaaaaaaaaaa.jpg' }, 'bot');
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(7, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-7.mp3');
+        addMessage({ type: 'video', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/video-da-carla.mp4' }, 'bot');
         await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "o que achou da  fotinha bb ? te deu tesão" }, 'bot');
-        setShowInput(true);
-        setFlowStep('awaiting_after_second_photo');
-        break;
-
-      case 'awaiting_after_second_photo':
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(8, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-8.mp3');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "voce ia  me chupar todinha ou me fuder gostoso ? ou fazer os 2 ? hehe 🔥🔥" }, 'bot');
-        setShowInput(true);
-        setFlowStep('awaiting_chupar_ou_fuder');
-        break;
-
-      case 'awaiting_chupar_ou_fuder':
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(9, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-9.mp3');
-        await playAudioSequence(10, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-10.mp3');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "vou mandar uma fotinha e um video pra vc s2, espero que goste ." }, 'bot');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "posso mandar ??? 🔥🔥" }, 'bot');
-        setShowInput(true);
-        setFlowStep('awaiting_video_permission');
-        break;
-
-      case 'awaiting_video_permission':
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(11, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-11.mp3');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'video', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/0829-1.mp4' }, 'bot');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/%F0%9F%94%A5.jpg' }, 'bot');
+        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/np8cokxo5ohb80xj6p6no9gs.jpg' }, 'bot');
         await showLoadingIndicator(20000, "Gravando áudio...");
-        await playAudioSequence(12, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-12.mp3');
-        await playAudioSequence(13, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-13.mp3');
+        await playAudioSequence(11, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/k.mp3');
         await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "o que acha da gente brincar em uma chamadinha de vídeo só nos dois?? 😊😊" }, 'bot');
-        setShowInput(true);
-        setFlowStep('awaiting_call_permission');
-        break;
-
-      case 'awaiting_call_permission':
+        addMessage({ type: 'text', text: "vamo bb ??" }, 'bot');
         await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(14, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-14.mp3');
-        await playAudioSequence(15, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-15.mp3');
+        await playAudioSequence(12, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/l.mp3');
         await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "posso te mandar meu pix amorzinho" }, 'bot');
+        addMessage({ type: 'text', text: "posso te mandar meu pix pra gente brincar gostoso então, amor ???" }, 'bot');
         setShowInput(true);
         setFlowStep('awaiting_pix_permission');
         break;
 
       case 'awaiting_pix_permission':
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(16, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-16.mp3');
         await handleCreatePix(50);
         break;
       
