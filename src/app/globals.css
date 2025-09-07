@@ -89,15 +89,36 @@ body {
 }
 
 @layer utilities {
+  .initial-screen-bg {
+    background: linear-gradient(-45deg, #1d0f2b, #2b1a3d, #4e2a6b, #3b2a75);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+  
   .animate-fadeIn {
     animation: fadeIn 1s ease-in-out;
   }
-  .animate-pulseGlow {
-    animation: pulseGlow 2s infinite ease-in-out;
+  .animate-border-glow {
+    border-image: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888) 1;
+    animation: borderGlow 4s linear infinite;
+  }
+  .animate-text-shadow-pulse {
+    animation: textShadowPulse 2s infinite ease-in-out;
+  }
+  .animate-heart-pulse {
+    display: inline-block;
+    color: #ff007f;
+    animation: heartPulse 1.5s infinite ease-in-out;
   }
   .animate-pulseButton {
     animation: pulseButton 2s infinite ease-in-out;
   }
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @keyframes fadeIn {
@@ -105,12 +126,31 @@ body {
   to { opacity: 1; }
 }
 
-@keyframes pulseGlow {
+@keyframes borderGlow {
+  0% { border-image-source: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+  25% { border-image-source: linear-gradient(45deg, #bc1888, #f09433, #e6683c, #dc2743, #cc2366); }
+  50% { border-image-source: linear-gradient(45deg, #cc2366, #bc1888, #f09433, #e6683c, #dc2743); }
+  75% { border-image-source: linear-gradient(45deg, #dc2743, #cc2366, #bc1888, #f09433, #e6683c); }
+  100% { border-image-source: linear-gradient(45deg, #e6683c, #dc2743, #cc2366, #bc1888, #f09433); }
+}
+
+@keyframes textShadowPulse {
   0%, 100% {
-    box-shadow: 0 0 0px hsl(var(--accent) / 0.7);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 255, 255, 0.2);
   }
   50% {
-    box-shadow: 0 0 20px 5px hsl(var(--accent) / 0.7);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes heartPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px #ff007f);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 5px #ff007f);
   }
 }
 
@@ -121,6 +161,6 @@ body {
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 15px 5px hsl(var(--accent) / 0.4);
+    box-shadow: 0 0 20px 10px hsl(var(--accent) / 0.4);
   }
 }

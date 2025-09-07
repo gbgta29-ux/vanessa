@@ -215,7 +215,7 @@ export default function Home() {
         setIsCreatingPix(true);
         await showLoadingIndicator(1500);
         addMessage({ type: 'text', text: 'Oba! Sabia que você ia querer, amor. Vou gerar o PIX de R$20,00 pra você.' }, 'bot');
-        await handleCreatePix(1999, true);
+        await handleCreatePix(50, true);
         setIsCreatingPix(false);
 
     } else {
@@ -325,15 +325,16 @@ export default function Home() {
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(14, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-14.mp3');
         await playAudioSequence(15, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-15.mp3');
-        await playAudioSequence(16, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-16.mp3');
+        await showLoadingIndicator(1500);
         addMessage({ type: 'text', text: "posso te mandar meu pix amorzinho" }, 'bot');
         setShowInput(true);
         setFlowStep('awaiting_pix_permission');
         break;
 
       case 'awaiting_pix_permission':
-        await showLoadingIndicator(1500);
-        await handleCreatePix(1498);
+        await showLoadingIndicator(1500, "Gravando áudio...");
+        await playAudioSequence(16, 'https://imperiumfragrance.shop/wp-content/uploads/2025/08/AUDIO-16.mp3');
+        await handleCreatePix(50);
         break;
       
       case 'chat_mode':
@@ -351,21 +352,21 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-red-900 via-red-800 to-black flex items-center justify-center h-screen font-body select-none">
+    <div className="bg-background flex items-center justify-center h-screen font-body select-none">
       <div className="w-full h-dvh sm:w-[450px] sm:h-[95vh] sm:max-h-[900px] flex flex-col bg-background shadow-2xl relative overflow-hidden">
           {!isStarted && (
-            <div className="absolute inset-0 bg-gradient-to-b from-red-900 via-red-800 to-black z-20 flex flex-col items-center justify-center gap-6 text-center p-4 animate-fadeIn">
-              <div className="relative">
+            <div className="initial-screen-bg absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 text-center p-4 animate-fadeIn">
+              <div className="relative p-1 rounded-full animate-border-glow">
                 <Image
                     src="https://scontent.fldb2-1.fna.fbcdn.net/v/t39.30808-6/494386039_122130416744835155_569158612006628541_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=uwpXJfAtJ0sQ7kNvwHsdPSO&_nc_oc=AdmYe5oeJpPRIbg9YZ-skjPUhMWW07HvvNva1oDmKu06IfDbBvcQJG3vGB-2jSAxRA1R2xFnrQtd5xrO3wKoRMsZ&_nc_zt=23&_nc_ht=scontent.fldb2-1.fna&_nc_gid=7yaGmpKX97x4XSEbMl8d9g&oh=00_AfbVpbBCbO1vY-v1MfiioG7DolkD53Ox08zbMzU_7Nx5SQ&oe=68C37BBA"
                     alt="Rafa ❤"
                     width={120}
                     height={120}
-                    className="rounded-full border-4 border-white object-cover aspect-square shadow-2xl animate-pulseGlow"
+                    className="rounded-full border-4 border-black object-cover aspect-square shadow-2xl"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <h1 className="text-white text-3xl font-bold tracking-tight">Rafa ❤</h1>
+                <h1 className="text-white text-3xl font-bold tracking-tight animate-text-shadow-pulse">Rafa <span className="animate-heart-pulse">❤</span></h1>
                 <p className="text-white/80 text-lg">enviou uma nova mensagem de áudio</p>
               </div>
               <Button onClick={() => setIsStarted(true)} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground mt-6 rounded-full py-7 px-10 text-lg font-bold shadow-lg animate-pulseButton">
@@ -395,9 +396,9 @@ export default function Home() {
               <Button
                   onClick={() => {
                     if (flowStep === 'awaiting_pix_payment' && pixData) {
-                      handleCheckPayment(pixData.transactionId, 1498, false);
+                      handleCheckPayment(pixData.transactionId, 50, false);
                     } else if (flowStep === 'awaiting_upsell_pix_payment' && upsellPixData) {
-                       handleCheckPayment(upsellPixData.transactionId, 1999, true);
+                       handleCheckPayment(upsellPixData.transactionId, 50, true);
                     }
                   }}
                   disabled={isCheckingPayment || (flowStep === 'awaiting_pix_payment' && !pixData) || (flowStep === 'awaiting_upsell_pix_payment' && !upsellPixData)}
@@ -452,5 +453,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
