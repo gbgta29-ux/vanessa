@@ -378,7 +378,7 @@ export default function Home() {
           <div 
             className="flex-1 overflow-y-auto"
             style={{
-              backgroundImage: "url('https://i.redd.it/ts7vuoswhwf41.jpg')",
+              backgroundImage: "url('https://wallpapers.com/images/hd/whatsapp-chat-doodle-patterns-jyd5uvep2fdwjl97.jpg')",
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}

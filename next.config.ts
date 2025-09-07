@@ -52,6 +52,12 @@ const nextConfig: NextConfig = {
         hostname: 'scontent.fldb2-1.fna.fbcdn.net',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'wallpapers.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
