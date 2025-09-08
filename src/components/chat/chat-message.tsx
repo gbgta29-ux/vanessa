@@ -1,4 +1,6 @@
 
+"use client";
+
 import { cn } from "@/lib/utils";
 import type { Message } from "@/types/message";
 import { Check, CheckCheck, Copy } from 'lucide-react';
@@ -6,7 +8,7 @@ import Image from "next/image";
 import AudioPlayer from "./audio-player";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatMessageProps {
   message: Message;
@@ -26,9 +28,78 @@ const MessageStatus = ({ status }: { status: Message['status'] }) => {
   return null;
 }
 
+const PixMessageContent = ({ message }: { message: Message }) => {
+  const { toast } = useToast();
+  const [displayedCode, setDisplayedCode] = useState('');
+  const [isAnimating, setIsAnimating] = useState(true);
+
+  useEffect(() => {
+    if (message.pixCopyPaste) {
+      setDisplayedCode('');
+      setIsAnimating(true);
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < message.pixCopyPaste!.length) {
+          setDisplayedCode(prev => prev + message.pixCopyPaste![i]);
+          i++;
+        } else {
+          clearInterval(interval);
+          setIsAnimating(false);
+        }
+      }, 20); // Adjust speed of typing animation here
+      return () => clearInterval(interval);
+    }
+  }, [message.pixCopyPaste]);
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast({
+      title: "Código PIX copiado!",
+      description: "Agora é só colar no seu aplicativo do banco.",
+    });
+  };
+
+  const TimeAndStatus = () => (
+    <div className="flex justify-end items-center mt-2">
+      <span className="text-xs text-gray-400 mr-1">{message.timestamp}</span>
+      {message.sender === 'user' && <MessageStatus status={message.status} />}
+    </div>
+  )
+
+  if (!message.pixCopyPaste) return null;
+
+  return (
+      <div className="bg-black rounded-lg text-white p-4 flex flex-col gap-4 relative overflow-hidden">
+        {/* Subtle sparkle effect */}
+        <div className="absolute inset-0 sparkle-bg opacity-20"></div>
+        <div className="relative z-10 flex flex-col items-center gap-4">
+            <p className="text-4xl font-bold text-accent drop-shadow-[0_0_8px_hsl(var(--accent))]">
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(message.value || 0)}
+            </p>
+            <div className="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 min-h-[80px]">
+                <p className="text-sm font-mono break-all text-gray-300">
+                    {displayedCode}
+                    {isAnimating && <span className="inline-block w-2 h-4 bg-accent animate-pulse ml-1" />}
+                </p>
+            </div>
+            <Button 
+                onClick={() => handleCopyCode(message.pixCopyPaste!)} 
+                variant="outline" 
+                className="w-full bg-transparent border-accent text-accent font-bold hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_15px_hsl(var(--accent))] transition-all duration-300 rounded-full"
+                disabled={isAnimating}
+            >
+                <Copy className="mr-2 h-4 w-4" />
+                Copiar código
+            </Button>
+            <TimeAndStatus />
+        </div>
+      </div>
+  );
+}
+
+
 export default function ChatMessage({ message, isAutoPlaying = false }: ChatMessageProps) {
   const isUser = message.sender === 'user';
-  const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -44,13 +115,6 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
     }
   }, [message.type]);
 
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    toast({
-      title: "Código PIX copiado!",
-      description: "Agora é só colar no seu aplicativo do banco.",
-    });
-  };
 
   const TimeAndStatus = () => (
     <div className="flex justify-end items-center">
@@ -69,29 +133,7 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
   const renderContent = () => {
     switch (message.type) {
       case 'pix':
-        if (!message.pixCopyPaste) return null;
-        return (
-          <div className="flex flex-col gap-3">
-            <div>
-              <p className="font-semibold text-sm">PIX Copia e Cola</p>
-              <p className="text-xs text-muted-foreground">Clique no botão para copiar o código.</p>
-            </div>
-            <div className="border-t border-b border-border/20 py-2 my-2 text-center">
-              <p className="text-sm text-muted-foreground">Valor a pagar</p>
-              <p className="text-2xl font-bold text-primary">
-                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(message.value || 0)}
-              </p>
-            </div>
-            <div className="w-full space-y-2">
-                <p className="bg-muted w-full text-xs text-left font-mono p-2 rounded-md break-all">{message.pixCopyPaste}</p>
-                <Button onClick={() => handleCopyCode(message.pixCopyPaste!)} variant="outline" className="w-full">
-                    <Copy className="mr-2 h-4 w-4" />
-                    Copiar código
-                </Button>
-            </div>
-            <div className="mt-1 -mb-1"><TimeAndStatus /></div>
-          </div>
-        );
+        return <PixMessageContent message={message} />;
       case 'audio':
         return (
           <>
@@ -154,9 +196,10 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
     <div className={cn("flex mb-2", isUser ? "justify-end" : "justify-start")}>
       <div className={cn(
         "rounded-lg shadow",
-        isUser ? "bg-whatsapp-user-message" : "bg-white",
+        isUser ? "bg-whatsapp-user-message" : message.type === 'pix' ? 'bg-transparent shadow-none' : "bg-white",
         (message.type === 'image' || message.type === 'video') ? 'p-1' :
         message.type === 'audio' ? 'py-2 px-2.5' :
+        message.type === 'pix' ? 'p-0' :
         'p-2',
         "max-w-[85%] md:max-w-[75%]"
       )}>
