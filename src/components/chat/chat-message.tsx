@@ -73,19 +73,19 @@ const PixMessageContent = ({ message }: { message: Message }) => {
         {/* Subtle sparkle effect */}
         <div className="absolute inset-0 sparkle-bg opacity-20"></div>
         <div className="relative z-10 flex flex-col items-center gap-4">
-            <p className="text-4xl font-bold text-accent drop-shadow-[0_0_8px_hsl(var(--accent))]">
+            <p className="text-4xl font-bold text-pink-400 drop-shadow-[0_0_8px_#f472b6]">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(message.value || 0)}
             </p>
             <div className="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 min-h-[80px]">
                 <p className="text-sm font-mono break-all text-gray-300">
                     {displayedCode}
-                    {isAnimating && <span className="inline-block w-2 h-4 bg-accent animate-pulse ml-1" />}
+                    {isAnimating && <span className="inline-block w-2 h-4 bg-pink-400 animate-pulse ml-1" />}
                 </p>
             </div>
             <Button 
                 onClick={() => handleCopyCode(message.pixCopyPaste!)} 
                 variant="outline" 
-                className="w-full bg-transparent border-accent text-accent font-bold hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_15px_hsl(var(--accent))] transition-all duration-300 rounded-full"
+                className="w-full bg-transparent border-pink-400 text-pink-400 font-bold hover:bg-pink-400 hover:text-white hover:shadow-[0_0_15px_#f472b6] transition-all duration-300 rounded-full"
                 disabled={isAnimating}
             >
                 <Copy className="mr-2 h-4 w-4" />
