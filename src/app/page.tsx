@@ -276,6 +276,11 @@ export default function Home() {
         await playAudioSequence(11, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/k.mp3');
         await showLoadingIndicator(1500);
         addMessage({ type: 'text', text: "vamo bb ??" }, 'bot');
+        setShowInput(true);
+        setFlowStep('awaiting_call_permission');
+        break;
+      
+      case 'awaiting_call_permission':
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(12, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/l.mp3');
         await showLoadingIndicator(1500);
