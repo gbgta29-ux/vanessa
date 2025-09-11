@@ -22,12 +22,14 @@ type FlowStep =
   | 'awaiting_peitinhos_second_chance'
   | 'awaiting_call_permission'
   | 'awaiting_pix_permission'
+  | 'awaiting_downsell_permission'
   | 'awaiting_pix_generation'
   | 'awaiting_pix_payment'
   | 'payment_confirmed_awaiting_upsell_choice'
   | 'awaiting_upsell_pix_payment'
   | 'upsell_payment_confirmed'
   | 'flow_complete_video_only'
+  | 'flow_rejected'
   | 'chat_mode';
 
 export default function Home() {
@@ -241,6 +243,7 @@ export default function Home() {
 
   const handlePeitinhosChoice = async (choice: 'yes' | 'no') => {
     setFlowStep('initial');
+    setShowInput(false);
     if (choice === 'yes') {
       addMessage({ type: 'text', text: 'Amei bb' }, 'user');
       await continuePeitinhosFlow();
@@ -252,6 +255,34 @@ export default function Home() {
       addMessage({ type: 'text', text: 'e agora bb, gostou' }, 'bot');
       setShowInput(true);
       setFlowStep('awaiting_peitinhos_second_chance');
+    }
+  };
+
+  const handlePixPermissionChoice = async (choice: 'yes' | 'no') => {
+    setFlowStep('initial');
+    setShowInput(false);
+    if (choice === 'yes') {
+      addMessage({ type: 'text', text: 'Pode' }, 'user');
+      await handleCreatePix(1500);
+    } else {
+      addMessage({ type: 'text', text: 'Não pode' }, 'user');
+      await showLoadingIndicator(1500);
+      addMessage({ type: 'text', text: "e se eu fizer um desconto pra vc por 10 reais bb ?" }, 'bot');
+      setFlowStep('awaiting_downsell_permission');
+    }
+  };
+  
+  const handleDownsellChoice = async (choice: 'yes' | 'no') => {
+    setFlowStep('initial');
+    setShowInput(false);
+    if (choice === 'yes') {
+      addMessage({ type: 'text', text: 'Pode ser' }, 'user');
+      await handleCreatePix(1000);
+    } else {
+      addMessage({ type: 'text', text: 'Não quero' }, 'user');
+      await showLoadingIndicator(1500);
+      addMessage({ type: 'text', text: "Tudo bem, amor. Deixa pra próxima então. Beijos! 😘" }, 'bot');
+      setFlowStep('flow_rejected');
     }
   };
 
@@ -296,6 +327,7 @@ export default function Home() {
         await playAudioSequence(9, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/i.mp3');
         await showLoadingIndicator(1500);
         addMessage({ type: 'text', text: "você gostou dos meus peitinhos safado ? 💗" }, 'bot');
+        setShowInput(false);
         setFlowStep('awaiting_peitinhos_choice');
         break;
 
@@ -305,15 +337,11 @@ export default function Home() {
 
       case 'awaiting_call_permission':
         await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(12, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/l.mp3');
+        await playAudioSequence(12, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/ElevenLabs_2025-09-11T20_50_21_Aninha_pvc_sp93_s50_sb75_v3.mp3');
         await showLoadingIndicator(1500);
         addMessage({ type: 'text', text: "posso te mandar meu pix pra gente brincar gostoso então, amor ???" }, 'bot');
-        setShowInput(true);
+        setShowInput(false);
         setFlowStep('awaiting_pix_permission');
-        break;
-
-      case 'awaiting_pix_permission':
-        await handleCreatePix(1500);
         break;
       
       case 'chat_mode':
@@ -374,10 +402,12 @@ export default function Home() {
               </div>
               <Button
                   onClick={() => {
-                    if (flowStep === 'awaiting_pix_payment' && pixData) {
-                      handleCheckPayment(pixData.transactionId, 1500, false);
-                    } else if (flowStep === 'awaiting_upsell_pix_payment' && upsellPixData) {
-                       handleCheckPayment(upsellPixData.transactionId, 1998, true);
+                    const value = flowStep === 'awaiting_pix_payment' ? (pixData?.value ? parseInt(pixData.value, 10) * 100 : 1500) : 1998;
+                    const txId = flowStep === 'awaiting_pix_payment' ? pixData?.transactionId : upsellPixData?.transactionId;
+                    const isUpsell = flowStep === 'awaiting_upsell_pix_payment';
+
+                    if (txId) {
+                      handleCheckPayment(txId, value, isUpsell);
                     }
                   }}
                   disabled={isCheckingPayment || (flowStep === 'awaiting_pix_payment' && !pixData) || (flowStep === 'awaiting_upsell_pix_payment' && !upsellPixData)}
@@ -417,6 +447,28 @@ export default function Home() {
             </div>
           )}
 
+          {flowStep === 'awaiting_pix_permission' && (
+             <div className="p-4 bg-background border-t border-border/20 flex items-center justify-center gap-4">
+                <Button onClick={() => handlePixPermissionChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+                    Pode
+                </Button>
+                <Button onClick={() => handlePixPermissionChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-destructive/90">
+                    Não pode
+                </Button>
+            </div>
+          )}
+
+          {flowStep === 'awaiting_downsell_permission' && (
+             <div className="p-4 bg-background border-t border-border/20 flex items-center justify-center gap-4">
+                <Button onClick={() => handleDownsellChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+                    Pode ser
+                </Button>
+                <Button onClick={() => handleDownsellChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-destructive/90">
+                    Não quero
+                </Button>
+            </div>
+          )}
+
           {flowStep === 'upsell_payment_confirmed' && (
              <div className="p-4 bg-background border-t border-border/20 flex justify-center">
               <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
@@ -443,6 +495,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-    
