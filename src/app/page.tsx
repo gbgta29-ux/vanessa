@@ -313,11 +313,7 @@ export default function Home() {
       case 'awaiting_state':
         setUserState(userMessageText);
         const capital = getCapital(userMessageText);
-        if (capital) {
-            addMessage({ type: 'text', text: `ah que legal bb, moro no ${userMessageText} também, na cidade de ${capital}, a gente mora pertinho então;` }, 'bot');
-        } else {
-            addMessage({ type: 'text', text: `ah que legal bb, moro em ${userMessageText} também, a gente mora pertinho então;` }, 'bot');
-        }
+        
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(7, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/g.mp3');
         await showLoadingIndicator(1500);
