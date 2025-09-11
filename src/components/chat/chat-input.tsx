@@ -25,7 +25,7 @@ export default function ChatInput({ formAction, disabled }: ChatInputProps) {
   return (
     <div className="flex items-center p-2.5 bg-background border-t border-border/20 shrink-0">
       <form ref={formRef} action={handleFormSubmit} className="flex-grow flex items-center gap-2.5">
-        <div className="flex-grow bg-white rounded-full flex items-center px-4 shadow-sm">
+        <div className="flex-grow bg-white rounded-full flex items-center px-4 shadow-lg ring-1 ring-border/50">
           <button type="button" aria-label="Emoji">
             <Smile className="text-muted-foreground" />
           </button>
@@ -44,7 +44,7 @@ export default function ChatInput({ formAction, disabled }: ChatInputProps) {
         </div>
         <Button 
           type="submit"
-          className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 shrink-0 shadow-sm"
+          className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 shrink-0 shadow-lg"
           disabled={disabled || !message.trim()}
           aria-label={message.trim() ? 'Enviar mensagem' : 'Gravar áudio'}
         >
