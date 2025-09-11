@@ -196,7 +196,7 @@ export default function Home() {
         setFlowStep('upsell_payment_confirmed');
       } else {
         await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(20, 'https://imperiumfragrance.shop/wp-content/uploads/2025/07/ElevenLabs_2025-07-25T23_51_20_Keren-Young-Brazilian-Female_pvc_sp110_s30_sb30_v3.mp3');
+        await playAudioSequence(20, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/ElevenLabs_2025-09-11T21_09_50_Aninha_pvc_sp93_s50_sb75_v3.mp3');
         addMessage({ type: 'text', text: "Amor, acabei de liberar meu número pessoal pra você... Quer pagar só mais R$ 19,98 pra gente conversar por lá? 😏" }, 'bot');
         setFlowStep('payment_confirmed_awaiting_upsell_choice');
       }
@@ -491,3 +491,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
