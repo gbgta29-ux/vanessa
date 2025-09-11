@@ -8,7 +8,7 @@ import Image from "next/image";
 import AudioPlayer from "./audio-player";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface ChatMessageProps {
   message: Message;
@@ -30,26 +30,6 @@ const MessageStatus = ({ status }: { status: Message['status'] }) => {
 
 const PixMessageContent = ({ message }: { message: Message }) => {
   const { toast } = useToast();
-  const [displayedCode, setDisplayedCode] = useState('');
-  const [isAnimating, setIsAnimating] = useState(true);
-
-  useEffect(() => {
-    if (message.pixCopyPaste) {
-      setDisplayedCode('');
-      setIsAnimating(true);
-      let i = 0;
-      const interval = setInterval(() => {
-        if (i < message.pixCopyPaste!.length) {
-          setDisplayedCode(prev => prev + message.pixCopyPaste![i]);
-          i++;
-        } else {
-          clearInterval(interval);
-          setIsAnimating(false);
-        }
-      }, 20); // Adjust speed of typing animation here
-      return () => clearInterval(interval);
-    }
-  }, [message.pixCopyPaste]);
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -78,18 +58,16 @@ const PixMessageContent = ({ message }: { message: Message }) => {
             </p>
             <div className="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 min-h-[80px]">
                 <p className="text-sm font-mono break-all text-gray-300">
-                    {displayedCode}
-                    {isAnimating && <span className="inline-block w-2 h-4 bg-pink-400 animate-pulse ml-1" />}
+                    {message.pixCopyPaste}
                 </p>
             </div>
             <Button 
                 onClick={() => handleCopyCode(message.pixCopyPaste!)} 
                 variant="outline" 
                 className="w-full bg-transparent border-pink-400 text-pink-400 font-bold hover:bg-pink-400 hover:text-white hover:shadow-[0_0_15px_#f472b6] transition-all duration-300 rounded-full"
-                disabled={isAnimating}
             >
                 <Copy className="mr-2 h-4 w-4" />
-                Copiar código
+                Copiar pix
             </Button>
             <TimeAndStatus />
         </div>
