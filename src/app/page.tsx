@@ -18,7 +18,8 @@ type FlowStep =
   | 'initial'
   | 'awaiting_game_permission'
   | 'awaiting_state'
-  | 'awaiting_peitinhos_response'
+  | 'awaiting_peitinhos_choice'
+  | 'awaiting_peitinhos_second_chance'
   | 'awaiting_call_permission'
   | 'awaiting_pix_permission'
   | 'awaiting_pix_generation'
@@ -221,6 +222,40 @@ export default function Home() {
     }
   }
 
+  const continuePeitinhosFlow = async () => {
+    setShowInput(false);
+    setFlowStep('initial');
+    await showLoadingIndicator(1500, "Gravando áudio...");
+    await playAudioSequence(10, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/j.mp3');
+    await showLoadingIndicator(1500);
+    addMessage({ type: 'video', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/video-da-carla.mp4' }, 'bot');
+    await showLoadingIndicator(1500);
+    addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/np8cokxo5ohb80xj6p6no9gs.jpg' }, 'bot');
+    await showLoadingIndicator(20000, "Gravando áudio...");
+    await playAudioSequence(11, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/k.mp3');
+    await showLoadingIndicator(1500);
+    addMessage({ type: 'text', text: "vamo bb ??" }, 'bot');
+    setShowInput(true);
+    setFlowStep('awaiting_call_permission');
+  };
+
+  const handlePeitinhosChoice = async (choice: 'yes' | 'no') => {
+    setFlowStep('initial');
+    if (choice === 'yes') {
+      addMessage({ type: 'text', text: 'Amei bb' }, 'user');
+      await continuePeitinhosFlow();
+    } else {
+      addMessage({ type: 'text', text: 'Não gostei' }, 'user');
+      await showLoadingIndicator(1500);
+      addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/@ItsOnlyy-on-Telegram-302-scaled.jpg' }, 'bot');
+      await showLoadingIndicator(1500);
+      addMessage({ type: 'text', text: 'e agora bb, gostou' }, 'bot');
+      setShowInput(true);
+      setFlowStep('awaiting_peitinhos_second_chance');
+    }
+  };
+
+
   const formAction = async (formData: FormData) => {
     const userMessageText = formData.get("message") as string;
     if (!userMessageText.trim()) return;
@@ -261,25 +296,13 @@ export default function Home() {
         await playAudioSequence(9, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/i.mp3');
         await showLoadingIndicator(1500);
         addMessage({ type: 'text', text: "você gostou dos meus peitinhos safado ? 💗" }, 'bot');
-        setShowInput(true);
-        setFlowStep('awaiting_peitinhos_response');
+        setFlowStep('awaiting_peitinhos_choice');
         break;
 
-      case 'awaiting_peitinhos_response':
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(10, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/j.mp3');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'video', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/video-da-carla.mp4' }, 'bot');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/np8cokxo5ohb80xj6p6no9gs.jpg' }, 'bot');
-        await showLoadingIndicator(20000, "Gravando áudio...");
-        await playAudioSequence(11, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/k.mp3');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "vamo bb ??" }, 'bot');
-        setShowInput(true);
-        setFlowStep('awaiting_call_permission');
+      case 'awaiting_peitinhos_second_chance':
+        await continuePeitinhosFlow();
         break;
-      
+
       case 'awaiting_call_permission':
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(12, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/l.mp3');
@@ -383,6 +406,17 @@ export default function Home() {
             </div>
           )}
 
+          {flowStep === 'awaiting_peitinhos_choice' && (
+             <div className="p-4 bg-background border-t border-border/20 flex items-center justify-center gap-4">
+                <Button onClick={() => handlePeitinhosChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+                    Amei bb
+                </Button>
+                <Button onClick={() => handlePeitinhosChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-destructive/90">
+                    Não gostei
+                </Button>
+            </div>
+          )}
+
           {flowStep === 'upsell_payment_confirmed' && (
              <div className="p-4 bg-background border-t border-border/20 flex justify-center">
               <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
@@ -410,4 +444,5 @@ export default function Home() {
   );
 }
 
+    
     
