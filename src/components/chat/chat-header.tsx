@@ -8,7 +8,7 @@ export default function ChatHeader() {
         <ArrowLeft className="h-6 w-6" />
       </button>
       <Image
-        src="https://scontent.fldb2-1.fna.fbcdn.net/v/t39.30808-6/494386039_122130416744835155_569158612006628541_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=uwpXJfAtJ0sQ7kNvwHsdPSO&_nc_oc=AdmYe5oeJpPRIbg9YZ-skjPUhMWW07HvvNva1oDmKu06IfDbBvcQJG3vGB-2jSAxRA1R2xFnrQtd5xrO3wKoRMsZ&_nc_zt=23&_nc_ht=scontent.fldb2-1.fna&_nc_gid=7yaGmpKX97x4XSEbMl8d9g&oh=00_AfbVpbBCbO1vY-v1MfiioG7DolkD53Ox08zbMzU_7Nx5SQ&oe=68C37BBA"
+        src="https://imperiumfragrance.shop/wp-content/uploads/2025/09/viral_beautiez_520810178_18016258871725225_2900008484888866208_n-1.webp"
         data-ai-hint="woman profile"
         alt="Rafa ❤"
         width={40}

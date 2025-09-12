@@ -237,8 +237,8 @@ export default function Home() {
     await playAudioSequence(11, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/k.mp3');
     await showLoadingIndicator(1500);
     addMessage({ type: 'text', text: "vamo bb ??" }, 'bot');
-    setShowInput(true);
     setFlowStep('awaiting_call_permission');
+    setShowInput(true);
   };
 
   const handlePeitinhosChoice = async (choice: 'yes' | 'no') => {
@@ -317,7 +317,6 @@ export default function Home() {
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(7, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/g.mp3');
         await showLoadingIndicator(1500);
-        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/Design-sem-nome-54.jpg' }, 'bot');
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(8, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/h.mp3');
         await playAudioSequence(9, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/i.mp3');
@@ -361,7 +360,7 @@ export default function Home() {
             <div className="initial-screen-bg absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 text-center p-4 animate-fadeIn">
               <div className="relative p-1 rounded-full animate-border-glow">
                 <Image
-                    src="https://scontent.fldb2-1.fna.fbcdn.net/v/t39.30808-6/494386039_122130416744835155_569158612006628541_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=uwpXJfAtJ0sQ7kNvwHsdPSO&_nc_oc=AdmYe5oeJpPRIbg9YZ-skjPUhMWW07HvvNva1oDmKu06IfDbBvcQJG3vGB-2jSAxRA1R2xFnrQtd5xrO3wKoRMsZ&_nc_zt=23&_nc_ht=scontent.fldb2-1.fna&_nc_gid=7yaGmpKX97x4XSEbMl8d9g&oh=00_AfbVpbBCbO1vY-v1MfiioG7DolkD53Ox08zbMzU_7Nx5SQ&oe=68C37BBA"
+                    src="https://imperiumfragrance.shop/wp-content/uploads/2025/09/viral_beautiez_520810178_18016258871725225_2900008484888866208_n-1.webp"
                     alt="Rafa ❤"
                     width={120}
                     height={120}

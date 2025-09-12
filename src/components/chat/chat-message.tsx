@@ -8,7 +8,7 @@ import Image from "next/image";
 import AudioPlayer from "./audio-player";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatMessageProps {
   message: Message;
@@ -30,6 +30,27 @@ const MessageStatus = ({ status }: { status: Message['status'] }) => {
 
 const PixMessageContent = ({ message }: { message: Message }) => {
   const { toast } = useToast();
+  const [displayText, setDisplayText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    if (message.pixCopyPaste && !isTyping) {
+      setIsTyping(true);
+      let i = 0;
+      const fullText = message.pixCopyPaste;
+      setDisplayText(''); // Clear previous text
+      const interval = setInterval(() => {
+        setDisplayText(prev => prev + fullText.charAt(i));
+        i++;
+        if (i > fullText.length) {
+          clearInterval(interval);
+          setIsTyping(false);
+        }
+      }, 50); // Adjust typing speed here
+      return () => clearInterval(interval);
+    }
+  }, [message.pixCopyPaste, isTyping]);
+
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -56,10 +77,9 @@ const PixMessageContent = ({ message }: { message: Message }) => {
             <p className="text-4xl font-bold text-pink-400 drop-shadow-[0_0_8px_#f472b6]">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(message.value || 0)}
             </p>
-            <div className="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 min-h-[80px]">
-                <p className="text-sm font-mono break-all text-gray-300">
-                    {message.pixCopyPaste}
-                </p>
+            <div className="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 min-h-[80px] font-mono text-sm text-gray-300 break-all">
+                {displayText}
+                <span className="inline-block w-2 h-4 bg-pink-400 animate-pulse ml-1" />
             </div>
             <Button 
                 onClick={() => handleCopyCode(message.pixCopyPaste!)} 
@@ -117,7 +137,7 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
           <>
             <div className="flex items-center gap-2.5">
               <Image
-                  src="https://scontent.fldb2-1.fna.fbcdn.net/v/t39.30808-6/494386039_122130416744835155_569158612006628541_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=uwpXJfAtJ0sQ7kNvwHsdPSO&_nc_oc=AdmYe5oeJpPRIbg9YZ-skjPUhMWW07HvvNva1oDmKu06IfDbBvcQJG3vGB-2jSAxRA1R2xFnrQtd5xrO3wKoRMsZ&_nc_zt=23&_nc_ht=scontent.fldb2-1.fna&_nc_gid=7yaGmpKX97x4XSEbMl8d9g&oh=00_AfbVpbBCbO1vY-v1MfiioG7DolkD53Ox08zbMzU_7Nx5SQ&oe=68C37BBA"
+                  src="https://imperiumfragrance.shop/wp-content/uploads/2025/09/viral_beautiez_520810178_18016258871725225_2900008484888866208_n-1.webp"
                   data-ai-hint="woman profile"
                   alt="Rafa ❤"
                   width={40}
