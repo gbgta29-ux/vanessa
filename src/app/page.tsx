@@ -311,6 +311,8 @@ export default function Home() {
       case 'awaiting_location':
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(7, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/g.mp3');
+        await showLoadingIndicator(1500);
+        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/Design-sem-nome-54.jpg' }, 'bot');
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(8, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/h.mp3');
         await playAudioSequence(9, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/i.mp3');
@@ -484,5 +486,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
