@@ -17,7 +17,7 @@ import { track as fpixelTrack } from '@/lib/fpixel';
 type FlowStep =
   | 'initial'
   | 'awaiting_game_permission'
-  | 'awaiting_state'
+  | 'awaiting_location'
   | 'awaiting_peitinhos_choice'
   | 'awaiting_peitinhos_second_chance'
   | 'awaiting_call_permission'
@@ -40,7 +40,6 @@ export default function Home() {
   const [showInput, setShowInput] = useState(false);
   const [flowStep, setFlowStep] = useState<FlowStep>('initial');
   const [userName, setUserName] = useState('');
-  const [userState, setUserState] = useState('');
   const [isCreatingPix, setIsCreatingPix] = useState(false);
   const [isCheckingPayment, setIsCheckingPayment] = useState(false);
   const [pixData, setPixData] = useState<PixChargeData | null>(null);
@@ -109,25 +108,17 @@ export default function Home() {
       setIsLoading(false);
   };
 
-  const getCapital = (state: string): string | null => {
-    const stateCapitals: { [key: string]: string } = {
-        'acre': 'Rio Branco', 'alagoas': 'Maceió', 'amapá': 'Macapá', 'amazonas': 'Manaus',
-        'bahia': 'Salvador', 'ceará': 'Fortaleza', 'distrito federal': 'Brasília',
-        'espírito santo': 'Vitória', 'goiás': 'Goiânia', 'maranhão': 'São Luís',
-        'mato grosso': 'Cuiabá', 'mato grosso do sul': 'Campo Grande', 'minas gerais': 'Belo Horizonte',
-        'pará': 'Belém', 'paraíba': 'João Pessoa', 'paraná': 'Curitiba', 'pernambuco': 'Recife',
-        'piauí': 'Teresina', 'rio de janeiro': 'Rio de Janeiro', 'rio grande do norte': 'Natal',
-        'rio grande do sul': 'Porto Alegre', 'rondônia': 'Porto Velho', 'roraima': 'Boa Vista',
-        'santa catarina': 'Florianópolis', 'são paulo': 'São Paulo', 'sergipe': 'Aracaju', 'tocantins': 'Palmas',
-        'ac': 'Rio Branco', 'al': 'Maceió', 'ap': 'Macapá', 'am': 'Manaus', 'ba': 'Salvador',
-        'ce': 'Fortaleza', 'df': 'Brasília', 'es': 'Vitória', 'go': 'Goiânia', 'ma': 'São Luís',
-        'mt': 'Cuiabá', 'ms': 'Campo Grande', 'mg': 'Belo Horizonte', 'pa': 'Belém', 'pb': 'João Pessoa',
-        'pr': 'Curitiba', 'pe': 'Recife', 'pi': 'Teresina', 'rj': 'Rio de Janeiro', 'rn': 'Natal',
-        'rs': 'Porto Alegre', 'ro': 'Porto Velho', 'rr': 'Boa Vista', 'sc': 'Florianópolis',
-        'sp': 'São Paulo', 'se': 'Aracaju', 'to': 'Palmas'
-    };
-    return stateCapitals[state.toLowerCase()] || null;
-  }
+  const fetchUserCity = async (): Promise<string | null> => {
+    try {
+      const response = await fetch('https://ipapi.co/json/');
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.city || null;
+    } catch (error) {
+      console.error("Error fetching user city:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const runWelcomeFlow = async () => {
@@ -304,19 +295,22 @@ export default function Home() {
         await playAudioSequence(4, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/d.mp3');
         await playAudioSequence(5, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/e.mp3');
         await playAudioSequence(6, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/f.mp3');
+        
+        await showLoadingIndicator(2000);
+        const city = await fetchUserCity();
+        if (city) {
+          addMessage({ type: 'text', text: `moro em ${city}` }, 'bot');
+        }
+        
         await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "em qual estado você mora bb ?" }, 'bot');
+        addMessage({ type: 'text', text: "onde você mora bb ?" }, 'bot');
         setShowInput(true);
-        setFlowStep('awaiting_state');
+        setFlowStep('awaiting_location');
         break;
 
-      case 'awaiting_state':
-        setUserState(userMessageText);
-        const capital = getCapital(userMessageText);
-        
+      case 'awaiting_location':
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(7, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/g.mp3');
-        await showLoadingIndicator(1500);
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(8, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/h.mp3');
         await playAudioSequence(9, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/i.mp3');
