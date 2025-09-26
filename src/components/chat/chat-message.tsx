@@ -8,7 +8,7 @@ import Image from "next/image";
 import AudioPlayer from "./audio-player";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface ChatMessageProps {
   message: Message;
@@ -30,27 +30,6 @@ const MessageStatus = ({ status }: { status: Message['status'] }) => {
 
 const PixMessageContent = ({ message }: { message: Message }) => {
   const { toast } = useToast();
-  const [displayText, setDisplayText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-
-  useEffect(() => {
-    if (message.pixCopyPaste && !isTyping) {
-      setIsTyping(true);
-      let i = 0;
-      const fullText = message.pixCopyPaste;
-      setDisplayText(''); // Clear previous text
-      const interval = setInterval(() => {
-        setDisplayText(prev => prev + fullText.charAt(i));
-        i++;
-        if (i > fullText.length) {
-          clearInterval(interval);
-          setIsTyping(false);
-        }
-      }, 50); // Adjust typing speed here
-      return () => clearInterval(interval);
-    }
-  }, [message.pixCopyPaste, isTyping]);
-
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -78,8 +57,7 @@ const PixMessageContent = ({ message }: { message: Message }) => {
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(message.value || 0)}
             </p>
             <div className="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 min-h-[80px] font-mono text-sm text-gray-300 break-all">
-                {displayText}
-                <span className="inline-block w-2 h-4 bg-pink-400 animate-pulse ml-1" />
+                {message.pixCopyPaste}
             </div>
             <Button 
                 onClick={() => handleCopyCode(message.pixCopyPaste!)} 
