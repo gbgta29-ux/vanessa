@@ -288,7 +288,11 @@ export default function Home() {
 
     switch (flowStep) {
       case 'awaiting_game_permission':
-        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/@ItsOnlyy-on-Telegram-212-scaled.jpg' }, 'bot');
+        const city = await fetchUserCity();
+        const cityText = city ? encodeURIComponent(city.toUpperCase()) : 'BRASIL';
+        const dynamicImageUrl = `https://res.cloudinary.com/dhyvzwtec/image/upload/co_rgb:F50000,l_text:open%20sans_120_bold_italic_normal_left:${cityText}/fl_layer_apply,x_50,y_-860/Design_sem_nome_74_avgtli`;
+        
+        addMessage({ type: 'image', url: dynamicImageUrl }, 'bot');
         await showLoadingIndicator(1500);
         addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/a4ebc6e9-ba75-4a2d-a5ea-a498896ab9d4.jpg' }, 'bot');
         await showLoadingIndicator(1500, "Gravando áudio...");
@@ -297,7 +301,7 @@ export default function Home() {
         await playAudioSequence(6, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/f.mp3');
         
         await showLoadingIndicator(2000);
-        const city = await fetchUserCity();
+        
         if (city) {
           addMessage({ type: 'text', text: `moro em ${city}` }, 'bot');
         }
@@ -486,6 +490,8 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
 
