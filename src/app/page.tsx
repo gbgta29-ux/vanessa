@@ -120,17 +120,40 @@ export default function Home() {
     }
   };
 
+  const continueToGame = async () => {
+    await showLoadingIndicator(1500);
+
+    const city = await fetchUserCity();
+    const cityText = city ? encodeURIComponent(city.toUpperCase()) : 'BRASIL';
+    const dynamicImageUrl = `https://res.cloudinary.com/dhyvzwtec/image/upload/co_rgb:F50000,l_text:open%20sans_120_bold_italic_normal_left:${cityText}/fl_layer_apply,x_50,y_-860/Design_sem_nome_74_avgtli`;
+    
+    addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/a4ebc6e9-ba75-4a2d-a5ea-a498896ab9d4.jpg' }, 'bot');
+    await showLoadingIndicator(1500);
+    addMessage({ type: 'image', url: dynamicImageUrl }, 'bot');
+    await showLoadingIndicator(1500, "Gravando áudio...");
+    await playAudioSequence(4, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/d.mp3');
+    await playAudioSequence(5, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/e.mp3');
+    await playAudioSequence(6, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/f.mp3');
+    
+    await showLoadingIndicator(2000);
+    
+    if (city) {
+      addMessage({ type: 'text', text: `moro em ${city}` }, 'bot');
+    }
+    
+    await showLoadingIndicator(1500);
+    addMessage({ type: 'text', text: "onde você mora bb ?" }, 'bot');
+    setShowInput(true);
+    setFlowStep('awaiting_location');
+  };
+
   useEffect(() => {
     const runWelcomeFlow = async () => {
       await showLoadingIndicator(1500, "Gravando áudio...");
       await playAudioSequence(1, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/a.mp3');
-      await playAudioSequence(2, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/b.mp3');
-      await playAudioSequence(3, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/c.mp3');
-
-      await showLoadingIndicator(1500);
-      addMessage({ type: 'text', text: "bora jogar esse joguinho, amor ?" }, 'bot');
-      setShowInput(true);
-      setFlowStep('awaiting_game_permission');
+      await playAudioSequence(2, 'https://imperiumfragrance.shop/wp-content/uploads/2025/10/ElevenLabs_2025-10-06T19_05_52_Aninha_pvc_sp93_s50_sb75_v3.mp3');
+      
+      continueToGame();
     };
 
     if (isStarted) {
@@ -287,28 +310,7 @@ export default function Home() {
 
     switch (flowStep) {
       case 'awaiting_game_permission':
-        const city = await fetchUserCity();
-        const cityText = city ? encodeURIComponent(city.toUpperCase()) : 'BRASIL';
-        const dynamicImageUrl = `https://res.cloudinary.com/dhyvzwtec/image/upload/co_rgb:F50000,l_text:open%20sans_120_bold_italic_normal_left:${cityText}/fl_layer_apply,x_50,y_-860/Design_sem_nome_74_avgtli`;
-        
-        addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/a4ebc6e9-ba75-4a2d-a5ea-a498896ab9d4.jpg' }, 'bot');
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'image', url: dynamicImageUrl }, 'bot');
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence(4, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/d.mp3');
-        await playAudioSequence(5, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/e.mp3');
-        await playAudioSequence(6, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/f.mp3');
-        
-        await showLoadingIndicator(2000);
-        
-        if (city) {
-          addMessage({ type: 'text', text: `moro em ${city}` }, 'bot');
-        }
-        
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "onde você mora bb ?" }, 'bot');
-        setShowInput(true);
-        setFlowStep('awaiting_location');
+        await continueToGame();
         break;
 
       case 'awaiting_location':
@@ -489,3 +491,4 @@ export default function Home() {
     </div>
   );
 }
+
