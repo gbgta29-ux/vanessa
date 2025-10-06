@@ -59,13 +59,15 @@ const nextConfig: NextConfig = {
         hostname: 'wallpapers.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'get.geojs.io',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
 };
 
 export default nextConfig;
-
-    
-
-    

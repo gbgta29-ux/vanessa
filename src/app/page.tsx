@@ -110,7 +110,7 @@ export default function Home() {
 
   const fetchUserCity = async (): Promise<string | null> => {
     try {
-      const response = await fetch('https://ipapi.co/json/');
+      const response = await fetch('https://get.geojs.io/v1/ip/geo.json');
       if (!response.ok) return null;
       const data = await response.json();
       return data.city || null;
@@ -144,6 +144,8 @@ export default function Home() {
     if (!isUpsell) {
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence(13, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/m.mp3');
+    } else {
+       await showLoadingIndicator(1500);
     }
     
     const charge = await createPixCharge(value);
@@ -151,6 +153,7 @@ export default function Home() {
       fpixelTrack('InitiateCheckout', { value: value / 100, currency: 'BRL' });
       if(isUpsell) {
         setUpsellPixData(charge);
+        addMessage({ type: 'text', text: 'Oba! Sabia que você ia querer, amor. Gere o PIX de R$19,98 pra você.' }, 'bot');
         addMessage({ type: 'pix', sender: 'bot', pixCopyPaste: charge.pixCopyPaste, value: value / 100 });
         setFlowStep('awaiting_upsell_pix_payment');
       } else {
@@ -201,11 +204,7 @@ export default function Home() {
     setFlowStep('initial'); // Disable buttons
     if (choice === 'yes') {
         addMessage({ type: 'text', text: 'Sim, eu quero!' }, 'user');
-        setIsCreatingPix(true);
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: 'Oba! Sabia que você ia querer, amor. Vou gerar o PIX de R$19,98 pra você.' }, 'bot');
         await handleCreatePix(1998, true);
-        setIsCreatingPix(false);
 
     } else {
         addMessage({ type: 'text', text: 'Não, obrigado' }, 'user');
@@ -490,9 +489,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
-
-    
