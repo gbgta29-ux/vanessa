@@ -243,9 +243,9 @@ export default function Home() {
     await showLoadingIndicator(1500, "Gravando áudio...");
     await playAudioSequence(10, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/j.mp3');
     await showLoadingIndicator(1500);
-    addMessage({ type: 'video', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/video-da-carla.mp4' }, 'bot');
+    addMessage({ type: 'video', url: 'https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/2ee7308fbp6_1761444329251.mp4' }, 'bot');
     await showLoadingIndicator(1500);
-    addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/np8cokxo5ohb80xj6p6no9gs.jpg' }, 'bot');
+    addMessage({ type: 'image', url: 'https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/vxlabfsxrer_1761444332437.jpg' }, 'bot');
     await showLoadingIndicator(20000, "Gravando áudio...");
     await playAudioSequence(11, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/k.mp3');
     await showLoadingIndicator(1500);
@@ -263,7 +263,7 @@ export default function Home() {
     } else {
       addMessage({ type: 'text', text: 'Não gostei' }, 'user');
       await showLoadingIndicator(1500);
-      addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/@ItsOnlyy-on-Telegram-302-scaled.jpg' }, 'bot');
+      addMessage({ type: 'image', url: 'https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/80mx831z2q8_1761444336671.jpg' }, 'bot');
       await showLoadingIndicator(1500);
       addMessage({ type: 'text', text: 'e agora bb, gostou' }, 'bot');
       setShowInput(true);
@@ -492,5 +492,8 @@ export default function Home() {
   );
 }
 
+
+    
+    
 
     
