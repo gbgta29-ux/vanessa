@@ -90,9 +90,7 @@ body {
 
 @layer utilities {
   .initial-screen-bg {
-    background: linear-gradient(-45deg, #1d0f2b, #2b1a3d, #4e2a6b, #3b2a75);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    background: #ff007f;
   }
   
   .animate-fadeIn {
