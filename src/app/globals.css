@@ -90,7 +90,7 @@ body {
 
 @layer utilities {
   .initial-screen-bg {
-    background: #ff007f;
+    background: #cc0066;
   }
   
   .animate-fadeIn {
