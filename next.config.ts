@@ -65,6 +65,12 @@ const nextConfig: NextConfig = {
         hostname: 'get.geojs.io',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'gvdtvgefzbxunjrtzrdw.supabase.co',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

@@ -8,15 +8,15 @@ export default function ChatHeader() {
         <ArrowLeft className="h-6 w-6" />
       </button>
       <Image
-        src="https://imperiumfragrance.shop/wp-content/uploads/2025/09/viral_beautiez_520810178_18016258871725225_2900008484888866208_n-1.webp"
+        src="https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/eq05l4b90ds_1761442158494.jpg"
         data-ai-hint="woman profile"
-        alt="Rafa ❤"
+        alt="Carolzinha ❤"
         width={40}
         height={40}
         className="rounded-full object-cover aspect-square"
       />
       <div className="ml-3 flex-1">
-        <h1 className="font-semibold text-base leading-tight">Rafa ❤</h1>
+        <h1 className="font-semibold text-base leading-tight">Carolzinha ❤</h1>
         <p className="text-xs text-gray-600 leading-tight">online</p>
       </div>
       <div className="flex items-center space-x-1">

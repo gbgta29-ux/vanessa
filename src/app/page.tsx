@@ -361,15 +361,15 @@ export default function Home() {
             <div className="initial-screen-bg absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 text-center p-4 animate-fadeIn">
               <div className="relative p-1 rounded-full animate-border-glow">
                 <Image
-                    src="https://imperiumfragrance.shop/wp-content/uploads/2025/09/viral_beautiez_520810178_18016258871725225_2900008484888866208_n-1.webp"
-                    alt="Rafa ❤"
+                    src="https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/eq05l4b90ds_1761442158494.jpg"
+                    alt="Carolzinha ❤"
                     width={120}
                     height={120}
                     className="rounded-full border-4 border-black object-cover aspect-square shadow-2xl"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <h1 className="text-white text-3xl font-bold tracking-tight animate-text-shadow-pulse">Rafa <span className="animate-heart-pulse">❤</span></h1>
+                <h1 className="text-white text-3xl font-bold tracking-tight animate-text-shadow-pulse">Carolzinha <span className="animate-heart-pulse">❤</span></h1>
                 <p className="text-white/80 text-lg">enviou uma nova mensagem de áudio</p>
               </div>
               <Button onClick={() => setIsStarted(true)} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground mt-6 rounded-full py-7 px-10 text-lg font-bold shadow-lg animate-pulseButton">

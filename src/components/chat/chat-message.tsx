@@ -115,9 +115,9 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
           <>
             <div className="flex items-center gap-2.5">
               <Image
-                  src="https://imperiumfragrance.shop/wp-content/uploads/2025/09/viral_beautiez_520810178_18016258871725225_2900008484888866208_n-1.webp"
+                  src="https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/eq05l4b90ds_1761442158494.jpg"
                   data-ai-hint="woman profile"
-                  alt="Rafa ❤"
+                  alt="Carolzinha ❤"
                   width={40}
                   height={40}
                   className="shrink-0 rounded-full object-cover aspect-square"
