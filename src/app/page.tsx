@@ -125,9 +125,9 @@ export default function Home() {
 
     const city = await fetchUserCity();
     const cityText = city ? encodeURIComponent(city.toUpperCase()) : 'BRASIL';
-    const dynamicImageUrl = `https://res.cloudinary.com/dhyvzwtec/image/upload/co_rgb:F50000,l_text:open%20sans_120_bold_italic_normal_left:${cityText}/fl_layer_apply,x_50,y_-860/Design_sem_nome_74_avgtli`;
+    const dynamicImageUrl = `https://res.cloudinary.com/duvzbbidz/image/upload/co_rgb:FF0000,l_text:open%20sans_170_bold_italic_normal_left:${cityText}/fl_layer_apply,x_350,y_-1350/Design_sem_nome_86_oncxwy`;
     
-    addMessage({ type: 'image', url: 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/a4ebc6e9-ba75-4a2d-a5ea-a498896ab9d4.jpg' }, 'bot');
+    addMessage({ type: 'image', url: 'https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/6jdmjc4nfm_1761444066707.jpg' }, 'bot');
     await showLoadingIndicator(1500);
     addMessage({ type: 'image', url: dynamicImageUrl }, 'bot');
     await showLoadingIndicator(1500, "Gravando áudio...");
@@ -150,7 +150,7 @@ export default function Home() {
   useEffect(() => {
     const runWelcomeFlow = async () => {
       await showLoadingIndicator(1500, "Gravando áudio...");
-      await playAudioSequence(1, 'https://imperiumfragrance.shop/wp-content/uploads/2025/09/a.mp3');
+      await playAudioSequence(1, 'https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/quzf3vtf55_1761443571489.mp3');
       await playAudioSequence(2, 'https://imperiumfragrance.shop/wp-content/uploads/2025/10/ElevenLabs_2025-10-06T19_05_52_Aninha_pvc_sp93_s50_sb75_v3.mp3');
       
       continueToGame();
@@ -492,3 +492,5 @@ export default function Home() {
   );
 }
 
+
+    
