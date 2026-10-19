@@ -101,6 +101,37 @@ export default function Home() {
       setIsLoading(false);
   };
 
+  const runIcebreakerResponseFlow = async () => {
+    setShowInput(false);
+    await showLoadingIndicator(1500);
+    
+    // Step 3: Sequence
+    await showLoadingIndicator(2000, "Gravando áudio...");
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
+    addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
+
+    await delay(2000);
+
+    // Step 4: Content Strong
+    await showLoadingIndicator(2000, "Gravando áudio...");
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3');
+    addMessage({ type: 'video', url: 'https://vootlkuyzwzwvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4' }, 'bot');
+    
+    await delay(2000);
+    
+    await showLoadingIndicator(1500, "Gravando áudio...");
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441794331-64zkg.mp3');
+    
+    // Step 5: Offer
+    await showLoadingIndicator(1500, "Gravando áudio...");
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441793069-i18okg.mp3');
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442194866-40jkdg.mp3');
+    addMessage({ type: 'text', text: "bora uma chamadinha de video bb?" }, 'bot');
+    
+    setFlowStep('awaiting_call_permission');
+  }
+
   useEffect(() => {
     const runWelcomeFlow = async () => {
       // Step 1: Entry
@@ -112,41 +143,19 @@ export default function Home() {
       
       await delay(2000);
 
-      // Step 2: Icebreaker
-      await showLoadingIndicator(1500);
-      addMessage({ type: 'text', text: "Gosta de mulher mais velha e safada?" }, 'bot');
+      // Step 2: Icebreaker (Reordered: Audio -> Image -> Text)
       await showLoadingIndicator(1500, "Gravando áudio...");
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441799224-xwvy1.mp3');
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441798525-1afym6.mp3');
       addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg' }, 'bot');
       
-      await delay(2000);
-
-      // Step 3: Sequence (Now automated)
-      await showLoadingIndicator(2000, "Gravando áudio...");
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
-      addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
-
-      await delay(2000);
-
-      // Step 4: Content Strong
-      await showLoadingIndicator(2000, "Gravando áudio...");
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3');
-      addMessage({ type: 'video', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4' }, 'bot');
+      await delay(1500);
+      await showLoadingIndicator(1500);
+      addMessage({ type: 'text', text: "Gosta de mulher mais velha e safada?" }, 'bot');
       
-      await delay(2000);
-      
-      await showLoadingIndicator(1500, "Gravando áudio...");
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441794331-64zkg.mp3');
-      
-      // Step 5: Offer
-      await showLoadingIndicator(1500, "Gravando áudio...");
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441793069-i18okg.mp3');
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442194866-40jkdg.mp3');
-      addMessage({ type: 'text', text: "bora uma chamadinha de video bb?" }, 'bot');
-      
-      setFlowStep('awaiting_call_permission');
+      // Stop for user response
+      setFlowStep('awaiting_icebreaker');
+      setShowInput(true);
     };
 
     if (isStarted) {
@@ -158,7 +167,7 @@ export default function Home() {
   const handleCreatePix = async (value: number, isUpsell: boolean = false) => {
     setIsCreatingPix(true);
     
-    // Áudio antes de gerar o pix de 14.91 (somente no funil principal)
+    // Áudio antes de gerar o pix de 14.91
     if (!isUpsell && value === 1491) {
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441790450-khw79.mp3');
@@ -255,9 +264,11 @@ export default function Home() {
 
     addMessage({ type: 'text', text: userMessageText }, 'user');
     setShowInput(false);
-    await showLoadingIndicator(1500);
 
     switch (flowStep) {
+      case 'awaiting_icebreaker':
+        runIcebreakerResponseFlow();
+        break;
       case 'chat_mode':
         try {
           await showLoadingIndicator(2000);
