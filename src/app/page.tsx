@@ -105,10 +105,7 @@ export default function Home() {
     setShowInput(false);
     await showLoadingIndicator(1500);
     
-    // Step 3: Sequence
-    await showLoadingIndicator(2000, "Gravando áudio...");
-    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
-    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
+    // Step 3: Sequence (Mídia 3)
     addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
 
     await delay(2000);
@@ -144,9 +141,15 @@ export default function Home() {
       await delay(2000);
 
       // Step 2: Icebreaker (Reordered: Audio -> Image -> Text)
+      // Movi os áudios que vinham depois da mensagem para ANTES, conforme solicitado
       await showLoadingIndicator(1500, "Gravando áudio...");
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441799224-xwvy1.mp3');
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441798525-1afym6.mp3');
+      
+      // Áudios que eram da sequência 3 agora vêm antes da pergunta
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
+      
       addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg' }, 'bot');
       
       await delay(1500);
