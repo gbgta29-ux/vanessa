@@ -33,7 +33,6 @@ export default function Home() {
   const [autoPlayingAudioId, setAutoPlayingAudioId] = useState<number | null>(null);
   const [showInput, setShowInput] = useState(false);
   const [flowStep, setFlowStep] = useState<FlowStep>('initial');
-  const [userName, setUserName] = useState('');
   const [isCreatingPix, setIsCreatingPix] = useState(false);
   const [isCheckingPayment, setIsCheckingPayment] = useState(false);
   const [pixData, setPixData] = useState<PixChargeData | null>(null);
@@ -121,15 +120,7 @@ export default function Home() {
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441798525-1afym6.mp3');
       addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg' }, 'bot');
       
-      await delay(2000);
-
-      // Step 3: Sequence (O usuário pediu para juntar isso no fluxo automático)
-      await showLoadingIndicator(2000, "Gravando áudio...");
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
-      addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
-
-      // Agora sim, mostramos o input para ele interagir com tudo isso
+      // MOSTRAR INPUT APENAS AQUI
       setShowInput(true);
       setFlowStep('awaiting_icebreaker');
     };
@@ -142,7 +133,12 @@ export default function Home() {
 
   const handleCreatePix = async (value: number, isUpsell: boolean = false) => {
     setIsCreatingPix(true);
-    if (!isUpsell) {
+    
+    // Áudio antes de gerar o pix de 14.91 (somente no funil principal)
+    if (!isUpsell && value === 1491) {
+        await showLoadingIndicator(1500, "Gravando áudio...");
+        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441790450-khw79.mp3');
+    } else if (!isUpsell) {
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442266057-ney0mj.mp3');
     } else {
@@ -220,7 +216,7 @@ export default function Home() {
       addMessage({ type: 'text', text: 'Quero a videochamada agora' }, 'user');
       await showLoadingIndicator(1500);
       addMessage({ type: 'text', text: 'Perfeito… vou gerar o Pix pra você.' }, 'bot');
-      await handleCreatePix(1500);
+      await handleCreatePix(1491); // Valor alterado para 14,91
     } else {
       addMessage({ type: 'text', text: 'Ainda não' }, 'user');
       await showLoadingIndicator(1500);
@@ -234,11 +230,19 @@ export default function Home() {
     if (!userMessageText.trim()) return;
 
     addMessage({ type: 'text', text: userMessageText }, 'user');
-    setShowInput(false);
+    setShowInput(false); // Ocultar input em nenhuma outra parte
     await showLoadingIndicator(1500);
 
     switch (flowStep) {
       case 'awaiting_icebreaker':
+        // Step 3: Sequence
+        await showLoadingIndicator(2000, "Gravando áudio...");
+        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
+        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
+        addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
+
+        await delay(2000);
+
         // Step 4: Content Strong
         await showLoadingIndicator(2000, "Gravando áudio...");
         await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3');
@@ -253,7 +257,7 @@ export default function Home() {
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441793069-i18okg.mp3');
         await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442194866-40jkdg.mp3');
-        addMessage({ type: 'text', text: "bora bb" }, 'bot');
+        addMessage({ type: 'text', text: "bora uma chamadinha de video bb?" }, 'bot');
         
         setFlowStep('awaiting_call_permission');
         break;
@@ -267,7 +271,6 @@ export default function Home() {
           console.error(error);
           addMessage({ type: 'text', text: "Desculpe, ocorreu um erro ao processar sua mensagem." }, 'bot');
         }
-        setShowInput(true);
         break;
     }
   };
@@ -276,10 +279,10 @@ export default function Home() {
     <div className="bg-background flex items-center justify-center h-screen font-body select-none">
       <div className="w-full h-dvh sm:w-[450px] sm:h-[95vh] sm:max-h-[900px] flex flex-col bg-background shadow-2xl relative overflow-hidden">
           {!isStarted && (
-            <div className="bg-[#5c001e] absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 text-center p-4 animate-fadeIn">
+            <div className="bg-[#4a0018] absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 text-center p-4 animate-fadeIn">
               <div className="relative p-1 rounded-full animate-border-glow">
                 <Image
-                    src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440504276-6fe2u.jpg"
+                    src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440503168-d50kbr.jpg"
                     alt="Vanessa ❤"
                     width={120}
                     height={120}
@@ -290,10 +293,10 @@ export default function Home() {
                 <h1 className="text-white text-3xl font-bold tracking-tight animate-text-shadow-pulse">Vanessa <span className="animate-heart-pulse">❤</span></h1>
                 <p className="text-white/80 text-lg">enviou uma nova mensagem de áudio</p>
               </div>
-              <Button onClick={() => setIsStarted(true)} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground mt-6 rounded-full py-7 px-10 text-lg font-bold shadow-lg animate-pulseButton">
-                <Play className="mr-3 h-6 w-6" />
+              <button onClick={() => setIsStarted(true)} className="bg-accent hover:bg-accent/90 text-accent-foreground mt-6 rounded-full py-5 px-10 text-xl font-bold shadow-lg animate-pulseButton flex items-center">
+                <Play className="mr-3 h-6 w-6 fill-current" />
                 Ouvir agora
-              </Button>
+              </button>
             </div>
           )}
           <ChatHeader />
@@ -316,7 +319,7 @@ export default function Home() {
               </div>
               <Button
                   onClick={() => {
-                    const value = flowStep === 'awaiting_pix_payment' ? (pixData?.value ? parseInt(pixData.value, 10) * 100 : 1500) : 1998;
+                    const value = flowStep === 'awaiting_pix_payment' ? (pixData?.value ? Math.round(pixData.value * 100) : 1491) : 1998;
                     const txId = flowStep === 'awaiting_pix_payment' ? pixData?.transactionId : upsellPixData?.transactionId;
                     const isUpsell = flowStep === 'awaiting_upsell_pix_payment';
 

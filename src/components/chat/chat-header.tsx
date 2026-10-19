@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import { ArrowLeft, Video, Phone, MoreVertical } from 'lucide-react';
 
@@ -8,7 +9,7 @@ export default function ChatHeader() {
         <ArrowLeft className="h-6 w-6" />
       </button>
       <Image
-        src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440504276-6fe2u.jpg"
+        src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440503168-d50kbr.jpg"
         data-ai-hint="woman profile"
         alt="Vanessa ❤"
         width={40}

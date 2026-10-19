@@ -1,3 +1,4 @@
+
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -80,7 +81,8 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
     const video = videoRef.current;
     if (video) {
       if (message.type === 'video') {
-        video.muted = false;
+        // Mudar para mudo por padrão e remover controles ocorre no JSX abaixo
+        video.muted = true;
         const playPromise = video.play();
         if (playPromise !== undefined) {
           playPromise.catch(error => console.error("Video autoplay failed:", error));
@@ -113,7 +115,7 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
           <>
             <div className="flex items-center gap-2.5">
               <Image
-                  src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440504276-6fe2u.jpg"
+                  src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440503168-d50kbr.jpg"
                   data-ai-hint="woman profile"
                   alt="Vanessa ❤"
                   width={40}
@@ -149,6 +151,7 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
               src={message.url!}
               autoPlay
               playsInline
+              muted
               className="rounded-md object-cover w-full max-w-[300px]"
               data-ai-hint="story video"
             />
