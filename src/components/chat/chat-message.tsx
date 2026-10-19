@@ -81,7 +81,6 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
     const video = videoRef.current;
     if (video) {
       if (message.type === 'video') {
-        // Mudar para mudo por padrão e remover controles ocorre no JSX abaixo
         video.muted = true;
         const playPromise = video.play();
         if (playPromise !== undefined) {
