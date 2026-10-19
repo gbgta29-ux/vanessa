@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -110,7 +111,7 @@ export default function Home() {
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441730793-p790dd.mp3');
       addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440504276-6fe2u.jpg' }, 'bot');
       
-      await delay(1500);
+      await delay(2000);
 
       // Step 2: Icebreaker
       await showLoadingIndicator(1500);
@@ -120,6 +121,15 @@ export default function Home() {
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441798525-1afym6.mp3');
       addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg' }, 'bot');
       
+      await delay(2000);
+
+      // Step 3: Sequence (O usuário pediu para juntar isso no fluxo automático)
+      await showLoadingIndicator(2000, "Gravando áudio...");
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
+      addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
+
+      // Agora sim, mostramos o input para ele interagir com tudo isso
       setShowInput(true);
       setFlowStep('awaiting_icebreaker');
     };
@@ -229,13 +239,7 @@ export default function Home() {
 
     switch (flowStep) {
       case 'awaiting_icebreaker':
-        // Step 3 & 4: Sequence
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
-        addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
-        
-        await delay(2000);
-        
+        // Step 4: Content Strong
         await showLoadingIndicator(2000, "Gravando áudio...");
         await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3');
         addMessage({ type: 'video', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4' }, 'bot');
