@@ -168,10 +168,8 @@ export default function Home() {
   const handleCreatePix = async (value: number, isUpsell: boolean = false) => {
     setIsCreatingPix(true);
     
-    if (!isUpsell && value === 1491) {
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441790450-khw79.mp3');
-    } else if (!isUpsell) {
+    // Audio sequence is now handled before calling this for the 14,91 case
+    if (!isUpsell && value !== 1491) {
         await showLoadingIndicator(1500, "Gravando áudio...");
         await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442266057-ney0mj.mp3');
     } else {
@@ -247,8 +245,16 @@ export default function Home() {
     setFlowStep('initial');
     if (choice === 'yes') {
       addMessage({ type: 'text', text: 'Quero a videochamada agora' }, 'user');
-      await showLoadingIndicator(1500);
+      
+      // First play the audio about the value
+      await showLoadingIndicator(1500, "Gravando áudio...");
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441790450-khw79.mp3');
+      
+      // Then show the text about generating pix
+      await showLoadingIndicator(1000);
       addMessage({ type: 'text', text: 'Perfeito… vou gerar o Pix pra você.' }, 'bot');
+      
+      // Finally generate the pix
       await handleCreatePix(1491); 
     } else {
       addMessage({ type: 'text', text: 'Ainda não' }, 'user');
