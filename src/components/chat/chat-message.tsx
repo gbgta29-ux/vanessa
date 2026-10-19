@@ -1,4 +1,3 @@
-
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -50,7 +49,6 @@ const PixMessageContent = ({ message }: { message: Message }) => {
 
   return (
       <div className="bg-black rounded-lg text-white p-4 flex flex-col gap-4 relative overflow-hidden">
-        {/* Subtle sparkle effect */}
         <div className="absolute inset-0 sparkle-bg opacity-20"></div>
         <div className="relative z-10 flex flex-col items-center gap-4">
             <p className="text-4xl font-bold text-pink-400 drop-shadow-[0_0_8px_#f472b6]">
@@ -115,9 +113,9 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
           <>
             <div className="flex items-center gap-2.5">
               <Image
-                  src="https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/eq05l4b90ds_1761442158494.jpg"
+                  src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440504276-6fe2u.jpg"
                   data-ai-hint="woman profile"
-                  alt="Carolzinha ❤"
+                  alt="Vanessa ❤"
                   width={40}
                   height={40}
                   className="shrink-0 rounded-full object-cover aspect-square"

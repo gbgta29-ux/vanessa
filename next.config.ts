@@ -54,8 +54,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https'
-        ,
+        protocol: 'https',
         hostname: 'wallpapers.com',
         port: '',
         pathname: '/**',
@@ -71,11 +70,15 @@ const nextConfig: NextConfig = {
         hostname: 'gvdtvgefzbxunjrtzrdw.supabase.co',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'vootlkuyzwzvpxcfkfzk.supabase.co',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
 };
 
 export default nextConfig;
-
-    
