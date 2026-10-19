@@ -120,9 +120,33 @@ export default function Home() {
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441798525-1afym6.mp3');
       addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg' }, 'bot');
       
-      // MOSTRAR INPUT APENAS AQUI
-      setShowInput(true);
-      setFlowStep('awaiting_icebreaker');
+      await delay(2000);
+
+      // Step 3: Sequence (Now automated)
+      await showLoadingIndicator(2000, "Gravando áudio...");
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
+      addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
+
+      await delay(2000);
+
+      // Step 4: Content Strong
+      await showLoadingIndicator(2000, "Gravando áudio...");
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3');
+      addMessage({ type: 'video', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4' }, 'bot');
+      
+      await delay(2000);
+      
+      await showLoadingIndicator(1500, "Gravando áudio...");
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441794331-64zkg.mp3');
+      
+      // Step 5: Offer
+      await showLoadingIndicator(1500, "Gravando áudio...");
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441793069-i18okg.mp3');
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442194866-40jkdg.mp3');
+      addMessage({ type: 'text', text: "bora uma chamadinha de video bb?" }, 'bot');
+      
+      setFlowStep('awaiting_call_permission');
     };
 
     if (isStarted) {
@@ -216,7 +240,7 @@ export default function Home() {
       addMessage({ type: 'text', text: 'Quero a videochamada agora' }, 'user');
       await showLoadingIndicator(1500);
       addMessage({ type: 'text', text: 'Perfeito… vou gerar o Pix pra você.' }, 'bot');
-      await handleCreatePix(1491); // Valor alterado para 14,91
+      await handleCreatePix(1491); 
     } else {
       addMessage({ type: 'text', text: 'Ainda não' }, 'user');
       await showLoadingIndicator(1500);
@@ -230,38 +254,10 @@ export default function Home() {
     if (!userMessageText.trim()) return;
 
     addMessage({ type: 'text', text: userMessageText }, 'user');
-    setShowInput(false); // Ocultar input em nenhuma outra parte
+    setShowInput(false);
     await showLoadingIndicator(1500);
 
     switch (flowStep) {
-      case 'awaiting_icebreaker':
-        // Step 3: Sequence
-        await showLoadingIndicator(2000, "Gravando áudio...");
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
-        addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
-
-        await delay(2000);
-
-        // Step 4: Content Strong
-        await showLoadingIndicator(2000, "Gravando áudio...");
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3');
-        addMessage({ type: 'video', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4' }, 'bot');
-        
-        await delay(2000);
-        
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441794331-64zkg.mp3');
-        
-        // Step 5: Offer
-        await showLoadingIndicator(1500, "Gravando áudio...");
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441793069-i18okg.mp3');
-        await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442194866-40jkdg.mp3');
-        addMessage({ type: 'text', text: "bora uma chamadinha de video bb?" }, 'bot');
-        
-        setFlowStep('awaiting_call_permission');
-        break;
-      
       case 'chat_mode':
         try {
           await showLoadingIndicator(2000);
@@ -367,7 +363,7 @@ export default function Home() {
           {flowStep === 'upsell_payment_confirmed' && (
              <div className="p-4 bg-background border-t border-border/20 flex justify-center">
               <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
-                <Link href="https://wa.me/554399540418?text=oiii%20vanessa,%20comprei%20sua%20chamadinha%20de%20vídeo." target="_blank">
+                <Link href="https://wa.me/554399540418?text=oiii%20carol,%20comprei%20sua%20chamadinha%20de%20vídeo." target="_blank">
                   Conversar no WhatsApp
                 </Link>
               </Button>
