@@ -94,6 +94,23 @@ export default function Home() {
     setAutoPlayingAudioId(null);
     await delay(waitTime);
   };
+
+  const playVideoSequence = async (url: string, waitTime = 2000) => {
+    playNotificationSound();
+    await new Promise<void>(resolve => {
+      let resolved = false;
+      const safeResolve = () => {
+        if (!resolved) {
+          resolved = true;
+          resolve();
+        }
+      };
+      addMessage({ type: 'video', url, onEnded: safeResolve }, 'bot');
+      // Fallback máximo de 40s caso o usuário não dê play
+      setTimeout(safeResolve, 40000);
+    });
+    await delay(waitTime);
+  };
   
   const showLoadingIndicator = async (duration: number, text: string = "Digitando...") => {
       setLoadingText(text);
@@ -131,9 +148,8 @@ export default function Home() {
     // Audio 6: "Olha o que eu tô fazendo agora" + Vídeo Teaser conectado
     await showLoadingIndicator(1500, "Gravando áudio...");
     await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3');
-    addMessage({ type: 'video', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4' }, 'bot');
+    await playVideoSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4', 2000);
 
-    await delay(2000);
 
     // Foto 3 + Audio 7: Pós-vídeo
     addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -26,7 +25,7 @@ const MessageStatus = ({ status }: { status: Message['status'] }) => {
     return <CheckCheck className="h-4 w-4 ml-1 text-sky-500" aria-label="Read" />;
   }
   return null;
-}
+};
 
 const PixMessageContent = ({ message }: { message: Message }) => {
   const { toast } = useToast();
@@ -44,66 +43,111 @@ const PixMessageContent = ({ message }: { message: Message }) => {
       <span className="text-xs text-gray-400 mr-1">{message.timestamp}</span>
       {message.sender === 'user' && <MessageStatus status={message.status} />}
     </div>
-  )
+  );
 
   if (!message.pixCopyPaste) return null;
 
   return (
-      <div className="bg-black rounded-lg text-white p-4 flex flex-col gap-4 relative overflow-hidden">
-        <div className="absolute inset-0 sparkle-bg opacity-20"></div>
-        <div className="relative z-10 flex flex-col items-center gap-4">
-            <p className="text-4xl font-bold text-pink-400 drop-shadow-[0_0_8px_#f472b6]">
-                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(message.value || 0)}
-            </p>
-            <div className="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 min-h-[80px] font-mono text-sm text-gray-300 break-all">
-                {message.pixCopyPaste}
-            </div>
-            <Button 
-                onClick={() => handleCopyCode(message.pixCopyPaste!)} 
-                variant="outline" 
-                className="w-full bg-transparent border-pink-400 text-pink-400 font-bold hover:bg-pink-400 hover:text-white hover:shadow-[0_0_15px_#f472b6] transition-all duration-300 rounded-full"
-            >
-                <Copy className="mr-2 h-4 w-4" />
-                Copiar pix
-            </Button>
-            <TimeAndStatus />
+    <div className="bg-black rounded-lg text-white p-4 flex flex-col gap-4 relative overflow-hidden">
+      <div className="absolute inset-0 sparkle-bg opacity-20"></div>
+      <div className="relative z-10 flex flex-col items-center gap-4">
+        <p className="text-4xl font-bold text-pink-400 drop-shadow-[0_0_8px_#f472b6]">
+          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(message.value || 0)}
+        </p>
+        <div className="w-full bg-gray-900/50 border border-gray-700 rounded-lg p-3 min-h-[80px] font-mono text-sm text-gray-300 break-all">
+          {message.pixCopyPaste}
         </div>
+        <Button 
+          onClick={() => handleCopyCode(message.pixCopyPaste!)} 
+          variant="outline" 
+          className="w-full bg-transparent border-pink-400 text-pink-400 font-bold hover:bg-pink-400 hover:text-white hover:shadow-[0_0_15px_#f472b6] transition-all duration-300 rounded-full"
+        >
+          <Copy className="mr-2 h-4 w-4" />
+          Copiar pix
+        </Button>
+        <TimeAndStatus />
       </div>
+    </div>
   );
-}
+};
 
-
-export default function ChatMessage({ message, isAutoPlaying = false }: ChatMessageProps) {
-  const isUser = message.sender === 'user';
+const VideoPlayerItem = ({ message }: { message: Message }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const hasTriggeredEndRef = useRef(false);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (video) {
-      if (message.type === 'video') {
-        video.muted = true;
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(error => console.error("Video autoplay failed:", error));
-        }
-      }
-    }
-  }, [message.type]);
+    if (!video) return;
 
+    const triggerEnd = () => {
+      if (!hasTriggeredEndRef.current) {
+        hasTriggeredEndRef.current = true;
+        message.onEnded?.();
+      }
+    };
+
+    const handleEnded = () => triggerEnd();
+
+    const handleTimeUpdate = () => {
+      if (video.duration && video.currentTime >= video.duration - 0.4) {
+        triggerEnd();
+      }
+    };
+
+    video.addEventListener('ended', handleEnded);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+
+    // Inicia vídeo automaticamente (muted para contornar bloqueio de navegadores)
+    video.muted = true;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn("Autoplay de vídeo bloqueado pelo navegador:", err);
+      });
+    }
+
+    return () => {
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+    };
+  }, [message]);
+
+  return (
+    <div className="relative">
+      <video
+        ref={videoRef}
+        src={message.url!}
+        autoPlay
+        playsInline
+        muted
+        controls
+        preload="auto"
+        className="rounded-md object-cover w-full max-w-[300px]"
+        data-ai-hint="story video"
+      />
+      <div className="absolute bottom-1.5 right-1.5 bg-black/50 rounded-md px-1 py-0.5 flex items-center z-10 pointer-events-none">
+        <span className="text-xs text-white/90 mr-1">{message.timestamp}</span>
+      </div>
+    </div>
+  );
+};
+
+export default function ChatMessage({ message, isAutoPlaying = false }: ChatMessageProps) {
+  const isUser = message.sender === 'user';
 
   const TimeAndStatus = () => (
     <div className="flex justify-end items-center">
       <span className="text-xs text-muted-foreground mr-1">{message.timestamp}</span>
       {isUser && <MessageStatus status={message.status} />}
     </div>
-  )
+  );
 
   const OverlayTimeAndStatus = () => (
-     <div className="absolute bottom-1.5 right-1.5 bg-black/50 rounded-md px-1 py-0.5 flex items-center z-10">
-        <span className="text-xs text-white/90 mr-1">{message.timestamp}</span>
-        {isUser && <MessageStatus status={message.status} />}
-      </div>
-  )
+    <div className="absolute bottom-1.5 right-1.5 bg-black/50 rounded-md px-1 py-0.5 flex items-center z-10">
+      <span className="text-xs text-white/90 mr-1">{message.timestamp}</span>
+      {isUser && <MessageStatus status={message.status} />}
+    </div>
+  );
 
   const renderContent = () => {
     switch (message.type) {
@@ -114,12 +158,12 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
           <>
             <div className="flex items-center gap-2.5">
               <Image
-                  src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440503168-d50kbr.jpg"
-                  data-ai-hint="woman profile"
-                  alt="Vanessa ❤"
-                  width={40}
-                  height={40}
-                  className="shrink-0 rounded-full object-cover aspect-square"
+                src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440503168-d50kbr.jpg"
+                data-ai-hint="woman profile"
+                alt="Vanessa ❤"
+                width={40}
+                height={40}
+                className="shrink-0 rounded-full object-cover aspect-square"
               />
               <div className="w-[240px] sm:w-[270px]">
                 <AudioPlayer src={message.url!} autoplay={isAutoPlaying} onEnded={message.onEnded} />
@@ -143,21 +187,7 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
           </div>
         );
       case 'video':
-        return (
-          <div className="relative">
-            <video
-              ref={videoRef}
-              src={message.url!}
-              autoPlay
-              playsInline
-              muted
-              onEnded={message.onEnded}
-              className="rounded-md object-cover w-full max-w-[300px]"
-              data-ai-hint="story video"
-            />
-            <OverlayTimeAndStatus />
-          </div>
-        );
+        return <VideoPlayerItem message={message} />;
       case 'text':
       default:
         return (
@@ -165,7 +195,7 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
             <p className="text-sm whitespace-pre-wrap break-words">{message.text}</p>
             <div className="mt-1"><TimeAndStatus /></div>
           </>
-        )
+        );
     }
   };
 
