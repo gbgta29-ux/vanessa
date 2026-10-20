@@ -19,7 +19,6 @@ type FlowStep =
   | 'awaiting_amor_permission'
   | 'awaiting_after_gostar_response'
   | 'awaiting_after_picante_response'
-  | 'awaiting_after_audio_10_response'
   | 'awaiting_after_audio_14_response'
   | 'awaiting_pix_payment'
   | 'payment_confirmed_awaiting_upsell_choice'
@@ -34,18 +33,14 @@ export const VANESSA_MEDIA = {
   fotoSensual: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg",
   fotoIntima: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg",
   videoTeaser: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4",
-  audio1_apresentacao: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441730793-p790dd.mp3",
-  audio2_qualificacao: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441799224-xwvy1.mp3",
-  audio3_experiencia: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441798525-1afym6.mp3",
-  audio4_provocacao: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3",
-  audio5_sensorial: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3",
-  audio6_video: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3",
-  audio7_posVideo: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441794331-64zkg.mp3",
-  audio8_chamada: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441793069-i18okg.mp3",
-  audio9_transicao: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442194866-40jkdg.mp3",
-  audio10_pix: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441790450-khw79.mp3",
-  audio11_pixGarantia: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792454350481-7th7ms.mp3",
-  audioUpsell: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442367273-xapqnj.mp3",
+  audio1_boasvindas: "/vanessa/audio_1_boasvindas.mp3",
+  audio2_nome: "/vanessa/audio_2_nome.mp3",
+  audio3_permissao: "/vanessa/audio_3_permissao.mp3",
+  audio4_lingerie: "/vanessa/audio_4_lingerie.mp3",
+  audio5_chamada: "/vanessa/audio_5_chamada.mp3",
+  audio6_pix: "/vanessa/audio_6_pix.mp3",
+  audio7_objecao: "/vanessa/audio_7_objecao.mp3",
+  audio8_upsell: "/vanessa/audio_8_upsell.mp3",
   whatsappUrl: "https://wa.me/5543996011408?text=Oiii%20Vanessa%2C%20acabei%20de%20pegar%20seu%20WhatsApp%20VIP%20aqui!%20Vem%20falar%20comigo%20amor...%20%F0%9F%94%A5"
 };
 
@@ -177,7 +172,7 @@ export default function Home() {
     }
   };
 
-  // STEP 1: FLUXO DE BOAS-VINDAS COM GEOLOCALIZAÇÃO (IGUAL À DUDA)
+  // STEP 1: FLUXO DE BOAS-VINDAS COM GEOLOCALIZAÇÃO
   useEffect(() => {
     const runWelcomeFlow = async () => {
       if (isFlowRunning.current) return;
@@ -186,8 +181,9 @@ export default function Home() {
       const currentCity = await getCity();
       setCity(currentCity);
 
+      // Áudio 1: Boas-vindas da Vanessa
       await showLoadingIndicator(1500, "Gravando áudio...");
-      await playAudioSequence(VANESSA_MEDIA.audio1_apresentacao);
+      await playAudioSequence(VANESSA_MEDIA.audio1_boasvindas);
 
       await delay(800);
       addMessage({ type: 'image', url: VANESSA_MEDIA.fotoCasual }, 'bot');
@@ -199,8 +195,9 @@ export default function Home() {
       const locationText = currentCity === 'do Brasil' ? "aqui no Brasil" : `em ${currentCity}`;
       addMessage({ type: 'text', text: `E estou morando ${locationText}` }, 'bot');
 
+      // Áudio 2: Pergunta o nome
       await showLoadingIndicator(1500, "Gravando áudio...");
-      await playAudioSequence(VANESSA_MEDIA.audio2_qualificacao);
+      await playAudioSequence(VANESSA_MEDIA.audio2_nome);
 
       await delay(800);
       addMessage({ type: 'text', text: "Qual seu nome, bb? 💗" }, 'bot');
@@ -214,7 +211,10 @@ export default function Home() {
     }
   }, [isStarted]);
 
-  // CRIAÇÃO DE PIX (R$ 9,98 NA ENTRADA / R$ 19,99 NO UPSELL)
+  // CRIAÇÃO DE PIX:
+  // - Na entrada: o valor real cobrado na API PushinPay é 999 (R$ 9,99),
+  //   mas no texto e no visual do card exibimos R$ 10,00 conforme alinhado!
+  // - No Upsell: cobrado 1999 (R$ 19,99).
   const handleCreatePix = async (value: number, isUpsell: boolean = false) => {
     setIsCreatingPix(true);
     if (!isUpsell) {
@@ -222,6 +222,7 @@ export default function Home() {
       await showLoadingIndicator(2000);
     }
     
+    // value = 999 (R$ 9,99 para a cobrança real na gateway PushinPay)
     const charge = await createPixCharge(value);
     if (charge && charge.pixCopyPaste) {
       fpixelTrack('InitiateCheckout', { value: value / 100, currency: 'BRL' });
@@ -232,8 +233,9 @@ export default function Home() {
       } else {
         setPixData(charge);
         setFlowStep('awaiting_pix_payment');
-        addMessage({ type: 'text', text: `Prontinho amor, o valor é só R$${(value / 100).toFixed(2).replace('.', ',')}. Faz o pagamento pra gente começar nossa chamada de vídeo agora... 🔥` }, 'bot');
-        addMessage({ type: 'pix', sender: 'bot', pixCopyPaste: charge.pixCopyPaste, value: value / 100 });
+        // Visualmente informa R$ 10,00 no texto e no card:
+        addMessage({ type: 'text', text: "Prontinho amor, o valor é só R$ 10,00. Faz o pagamento pra gente começar nossa chamada de vídeo agora... 🔥" }, 'bot');
+        addMessage({ type: 'pix', sender: 'bot', pixCopyPaste: charge.pixCopyPaste, value: 10.00 });
       }
     } else {
       addMessage({ type: 'text', text: "Ops, não consegui gerar o PIX agora, amor. Tenta de novo em um minutinho." }, 'bot');
@@ -243,7 +245,7 @@ export default function Home() {
     setIsCreatingPix(false);
   };
 
-  // VERIFICAÇÃO DE PAGAMENTO & OBJEÇÃO CASO NÃO TENHA PAGO
+  // VERIFICAÇÃO DE PAGAMENTO & ÁUDIO DE OBJEÇÃO CASO NÃO TENHA PAGO
   const handleCheckPayment = async (txId: string, value: number, isUpsell: boolean = false) => {
     if (!txId || isCheckingPayment) return;
 
@@ -262,16 +264,19 @@ export default function Home() {
         addMessage({ type: 'text', text: "Pagamento confirmado, gostoso! 🔥 Clica no botão abaixo pra gente conversar no WhatsApp agora mesmo!" }, 'bot');
         setFlowStep('upsell_payment_confirmed');
       } else {
+        // Áudio 8: Upsell liberando o WhatsApp
         await showLoadingIndicator(2000, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audioUpsell);
+        await playAudioSequence(VANESSA_MEDIA.audio8_upsell);
         addMessage({ type: 'text', text: "Amor, acabei de liberar meu número pessoal pra você... Quer pagar só mais R$ 19,99 pra gente conversar por lá? 😏" }, 'bot');
         setFlowStep('payment_confirmed_awaiting_upsell_choice');
       }
     } else {
-      await showLoadingIndicator(1500, "Verificando...");
+      // Áudio 7: Objeção quando clicou em 'Já paguei' mas ainda não compensou
+      await showLoadingIndicator(2000, "Gravando áudio...");
+      await playAudioSequence(VANESSA_MEDIA.audio7_objecao);
       addMessage({ 
         type: 'text', 
-        text: "Amor, ainda não constou aqui no meu banco... Confere no seu aplicativo se o Pix foi concluído certinho que eu já tô te esperando! 🥺" 
+        text: "Amor, ainda não constou aqui no meu banco... Confere no seu aplicativo se o Pix foi concluído certinho que eu já tô prontinha te esperando! 🥺" 
       }, 'bot');
     }
     setIsCheckingPayment(false);
@@ -294,7 +299,7 @@ export default function Home() {
     }
   };
 
-  // GERENCIADOR DE RESPOSTAS DO USUÁRIO (MÁQUINA DE ESTADOS IDÊNTICA À DUDA)
+  // GERENCIADOR DE RESPOSTAS DO USUÁRIO
   const formAction = async (formData: FormData) => {
     const userMessageText = formData.get("message") as string;
     if (!userMessageText.trim()) return;
@@ -313,18 +318,18 @@ export default function Home() {
         setShowInput(true);
         break;
 
-      // 2. Recebeu permissão de chamar de amor
+      // 2. Recebeu permissão de chamar de amor -> Áudio 3 de permissão
       case 'awaiting_amor_permission':
         await delay(1000);
         await showLoadingIndicator(1800, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio3_experiencia);
+        await playAudioSequence(VANESSA_MEDIA.audio3_permissao);
         await showLoadingIndicator(1500);
         addMessage({ type: 'text', text: "Acho que vai gostar rsrs , posso mandar ?" }, 'bot');
         setFlowStep('awaiting_after_gostar_response');
         setShowInput(true);
         break;
 
-      // 3. Recebeu permissão de mandar a foto sensual
+      // 3. Recebeu autorização para mandar a foto sensual
       case 'awaiting_after_gostar_response':
         await delay(1000);
         await showLoadingIndicator(1800);
@@ -336,44 +341,30 @@ export default function Home() {
         setShowInput(true);
         break;
 
-      // 4. Recebeu o elogio da foto sensual -> Provocação
+      // 4. Recebeu o elogio da foto sensual -> Áudio 4 de lingerie + Foto Íntima + Vídeo + Áudio 5 de chamada
       case 'awaiting_after_picante_response':
         await delay(1000);
         await showLoadingIndicator(1800, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio4_provocacao);
-        await showLoadingIndicator(1800, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio5_sensorial);
-        await delay(1000);
-        addMessage({ type: 'text', text: "quer me ver ainda mais íntima amorzinho ??" }, 'bot');
-        setFlowStep('awaiting_after_audio_10_response');
-        setShowInput(true);
-        break;
-
-      // 5. Aceitou ver a intimidade -> Manda Foto Íntima + Vídeo Teaser + Convite para Chamada
-      case 'awaiting_after_audio_10_response':
+        await playAudioSequence(VANESSA_MEDIA.audio4_lingerie);
         await delay(1000);
         await showLoadingIndicator(1800);
         addMessage({ type: 'image', url: VANESSA_MEDIA.fotoIntima }, 'bot');
         await delay(1200);
-        await showLoadingIndicator(1800, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio6_video);
         await playVideoSequence(VANESSA_MEDIA.videoTeaser, 2000);
         await showLoadingIndicator(1800, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio7_posVideo);
+        await playAudioSequence(VANESSA_MEDIA.audio5_chamada);
         await showLoadingIndicator(1200);
         addMessage({ type: 'text', text: "eae bb bora chamadinha então ? 🔥" }, 'bot');
         setFlowStep('awaiting_after_audio_14_response');
         setShowInput(true);
         break;
 
-      // 6. Aceitou a chamadinha -> Áudios de fechamento e GERA PIX DE R$ 9,98
+      // 5. Aceitou a chamadinha -> Áudio 6 falando dos 10 reais e GERA PIX DE R$ 9,99 (visual R$ 10,00)
       case 'awaiting_after_audio_14_response':
         await delay(1000);
         await showLoadingIndicator(2000, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio8_chamada);
-        await playAudioSequence(VANESSA_MEDIA.audio9_transicao);
-        await playAudioSequence(VANESSA_MEDIA.audio11_pixGarantia);
-        await handleCreatePix(998); // R$ 9,98 (Conversão de Impulso)
+        await playAudioSequence(VANESSA_MEDIA.audio6_pix);
+        await handleCreatePix(999); // Cobra R$ 9,99 na gateway PushinPay
         break;
 
       case 'chat_mode':
@@ -439,7 +430,7 @@ export default function Home() {
             </div>
             <Button
               onClick={() => {
-                const value = flowStep === 'awaiting_pix_payment' ? 998 : 1999;
+                const value = flowStep === 'awaiting_pix_payment' ? 999 : 1999;
                 const txId = flowStep === 'awaiting_pix_payment' ? pixData?.transactionId : upsellPixData?.transactionId;
                 const isUpsell = flowStep === 'awaiting_upsell_pix_payment';
 
