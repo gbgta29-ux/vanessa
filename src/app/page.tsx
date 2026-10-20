@@ -30,8 +30,8 @@ type FlowStep =
 export const VANESSA_MEDIA = {
   profilePic: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440503168-d50kbr.jpg",
   fotoCasual: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440504276-6fe2u.jpg",
-  fotoSensual: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg",
-  fotoIntima: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg",
+  fotoSensual: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg",
+  fotoIntima: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg",
   videoTeaser: "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4",
   audio1_boasvindas: "/vanessa/audio_1_boasvindas.mp3",
   audio2_nome: "/vanessa/audio_2_nome.mp3",
