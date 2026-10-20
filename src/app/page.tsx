@@ -353,7 +353,7 @@ export default function Home() {
           )}
           <ChatHeader />
           <div 
-            className="flex-1 overflow-y-auto"
+            className="flex-1 min-h-0 overflow-y-auto"
             style={{
               backgroundImage: "url('https://wallpapers.com/images/hd/whatsapp-chat-doodle-patterns-jyd5uvep2fdwjl97.jpg')",
               backgroundSize: 'cover',
@@ -364,7 +364,7 @@ export default function Home() {
           </div>
 
           {(flowStep === 'awaiting_pix_payment' || flowStep === 'awaiting_upsell_pix_payment') && (
-            <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex flex-col items-center gap-4 shrink-0">
+            <div className="p-3.5 pb-8 sm:pb-4 bg-background border-t border-border/20 flex flex-col items-center gap-4 shrink-0">
               <div className="flex items-center text-sm text-muted-foreground">
                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
                 <span>Aguardando pagamento...</span>
@@ -380,7 +380,7 @@ export default function Home() {
                     }
                   }}
                   disabled={isCheckingPayment || (flowStep === 'awaiting_pix_payment' && !pixData) || (flowStep === 'awaiting_upsell_pix_payment' && !upsellPixData)}
-                  className="w-full bg-primary text-primary-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-primary/90"
+                  className="w-full bg-primary text-primary-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-primary/90"
               >
                   {isCheckingPayment ? (
                       <>
@@ -395,41 +395,41 @@ export default function Home() {
           )}
           
           {flowStep === 'payment_confirmed_awaiting_upsell_choice' && (
-             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
-                <Button onClick={() => handleUpsellChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+             <div className="p-3.5 pb-8 sm:pb-4 bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
+                <Button onClick={() => handleUpsellChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-accent/90">
                     Sim, eu quero!
                 </Button>
-                <Button onClick={() => handleUpsellChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-destructive/90">
+                <Button onClick={() => handleUpsellChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-destructive/90">
                     Não, obrigado
                 </Button>
             </div>
           )}
 
           {flowStep === 'awaiting_call_permission' && (
-             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
-                <Button onClick={() => handleCallChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+             <div className="p-3.5 pb-8 sm:pb-4 bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
+                <Button onClick={() => handleCallChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-accent/90">
                     Quero a videochamada agora
                 </Button>
-                <Button onClick={() => handleCallChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-destructive/90">
+                <Button onClick={() => handleCallChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-destructive/90">
                     Ainda não
                 </Button>
             </div>
           )}
 
           {flowStep === 'awaiting_downsell_choice' && (
-             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
-                <Button onClick={() => handleDownsellChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+             <div className="p-3.5 pb-8 sm:pb-4 bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
+                <Button onClick={() => handleDownsellChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-accent/90">
                     Quero por R$ 9,90 agora! 🔥
                 </Button>
-                <Button onClick={() => handleDownsellChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-destructive/90">
+                <Button onClick={() => handleDownsellChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-destructive/90">
                     Não, obrigado
                 </Button>
             </div>
           )}
 
           {flowStep === 'upsell_payment_confirmed' && (
-             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex justify-center shrink-0">
-              <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+             <div className="p-3.5 pb-8 sm:pb-4 bg-background border-t border-border/20 flex justify-center shrink-0">
+              <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-accent/90">
                 <Link href="https://wa.me/5543996011408?text=Oiii%20Vanessa%2C%20acabei%20de%20pegar%20seu%20WhatsApp%20VIP%20aqui!%20Vem%20falar%20comigo%20amor...%20%F0%9F%94%A5" target="_blank">
                   Conversar no WhatsApp
                 </Link>
@@ -438,8 +438,8 @@ export default function Home() {
           )}
 
           {flowStep === 'flow_complete_video_only' && (
-             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex justify-center shrink-0">
-              <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+             <div className="p-3.5 pb-8 sm:pb-4 bg-background border-t border-border/20 flex justify-center shrink-0">
+              <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-accent/90">
                 <Link href="/chamada" target="_blank">
                   Iniciar chamada de vídeo
                 </Link>

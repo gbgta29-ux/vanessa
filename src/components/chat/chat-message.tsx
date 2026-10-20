@@ -151,6 +151,7 @@ export default function ChatMessage({ message, isAutoPlaying = false }: ChatMess
               autoPlay
               playsInline
               muted
+              onEnded={message.onEnded}
               className="rounded-md object-cover w-full max-w-[300px]"
               data-ai-hint="story video"
             />
