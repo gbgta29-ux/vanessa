@@ -18,6 +18,7 @@ type FlowStep =
   | 'initial'
   | 'awaiting_icebreaker'
   | 'awaiting_call_permission'
+  | 'awaiting_downsell_choice'
   | 'awaiting_pix_payment'
   | 'payment_confirmed_awaiting_upsell_choice'
   | 'awaiting_upsell_pix_payment'
@@ -103,64 +104,78 @@ export default function Home() {
 
   const runIcebreakerResponseFlow = async () => {
     setShowInput(false);
-    await showLoadingIndicator(1500);
     
-    // Step 3: Sequence (Mídia 3)
-    addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
+    // Validação humana da resposta do usuário
+    await showLoadingIndicator(1500);
+    addMessage({ type: 'text', text: "Hahaha sabia que você ia curtir... rs 😏" }, 'bot');
+    
+    await delay(1000);
 
-    await delay(2000);
+    // Audio 3: Argumento de experiência
+    await showLoadingIndicator(1500, "Gravando áudio...");
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441798525-1afym6.mp3');
 
-    // Step 4: Content Strong
-    await showLoadingIndicator(2000, "Gravando áudio...");
+    // Audio 4: "Toma uma olhada só de falar com você" + Foto 2 conectada
+    await showLoadingIndicator(1200, "Gravando áudio...");
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
+    addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg' }, 'bot');
+
+    await delay(1500);
+
+    // Audio 5: Provocação sensorial
+    await showLoadingIndicator(1500, "Gravando áudio...");
+    await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
+
+    await delay(1500);
+
+    // Audio 6: "Olha o que eu tô fazendo agora" + Vídeo Teaser conectado
+    await showLoadingIndicator(1500, "Gravando áudio...");
     await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441795693-zb5bcx.mp3');
     addMessage({ type: 'video', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442085405-gbe6a9.mp4' }, 'bot');
-    
+
     await delay(2000);
-    
+
+    // Foto 3 + Audio 7: Pós-vídeo
+    addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg' }, 'bot');
     await showLoadingIndicator(1500, "Gravando áudio...");
     await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441794331-64zkg.mp3');
-    
-    // Step 5: Offer
+
+    await delay(1500);
+
+    // Audio 8 & 9: Transição para a chamada ao vivo
     await showLoadingIndicator(1500, "Gravando áudio...");
     await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441793069-i18okg.mp3');
     await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792442194866-40jkdg.mp3');
+
     addMessage({ type: 'text', text: "bora uma chamadinha de video bb?" }, 'bot');
-    
     setFlowStep('awaiting_call_permission');
-  }
+  };
 
   useEffect(() => {
     const runWelcomeFlow = async () => {
-      // Step 1: Entry
+      // Step 1: Boas-vindas + Audio 1 (Apresentação Vanessa 39 anos) + Foto 1
       await showLoadingIndicator(1500);
       addMessage({ type: 'text', text: "Oi… você veio por causa da minha foto né?" }, 'bot');
       await showLoadingIndicator(1500, "Gravando áudio...");
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441730793-p790dd.mp3');
       addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440504276-6fe2u.jpg' }, 'bot');
-      
-      await delay(2000);
 
-      // Step 2: Icebreaker (Reordered: Audio -> Image -> Text)
+      await delay(1500);
+
+      // Step 2: Audio 2 (Pergunta de qualificação) + Texto + Abre caixinha IMEDIATAMENTE
       await showLoadingIndicator(1500, "Gravando áudio...");
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441799224-xwvy1.mp3');
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441798525-1afym6.mp3');
       
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441797885-xbehvm.mp3');
-      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441796583-avx4z.mp3');
-      
-      addMessage({ type: 'image', url: 'https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg' }, 'bot');
-      
-      await delay(1500);
-      await showLoadingIndicator(1500);
+      await showLoadingIndicator(1000);
       addMessage({ type: 'text', text: "Gosta de mulher mais velha e safada?" }, 'bot');
-      
-      // Stop for user response
+
+      // Abre a caixinha na hora certa para o lead responder
       setFlowStep('awaiting_icebreaker');
       setShowInput(true);
     };
 
     if (isStarted) {
-        runWelcomeFlow();
+      runWelcomeFlow();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isStarted]);
@@ -262,6 +277,26 @@ export default function Home() {
       await handleCreatePix(1491); 
     } else {
       addMessage({ type: 'text', text: 'Ainda não' }, 'user');
+      await showLoadingIndicator(1500);
+      addMessage({ type: 'text', text: "Poxa amor, vai me deixar na vontade assim? 🥺" }, 'bot');
+      await delay(1200);
+      await showLoadingIndicator(1500);
+      addMessage({ type: 'text', text: "Faz o seguinte: me ajuda com só R$ 9,90 e a gente faz uma chamadinha rapidinha agora só pra matar a curiosidade... Topa? 😏" }, 'bot');
+      setFlowStep('awaiting_downsell_choice');
+    }
+  };
+
+  const handleDownsellChoice = async (choice: 'yes' | 'no') => {
+    setFlowStep('initial');
+    if (choice === 'yes') {
+      addMessage({ type: 'text', text: 'Quero por R$ 9,90' }, 'user');
+      await showLoadingIndicator(1500, "Gravando áudio...");
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792454350481-7th7ms.mp3');
+      await showLoadingIndicator(1000);
+      addMessage({ type: 'text', text: 'Adorei amor! Gerando o Pix de R$ 9,90 pra você agora...' }, 'bot');
+      await handleCreatePix(990);
+    } else {
+      addMessage({ type: 'text', text: 'Não, obrigado' }, 'user');
       await showLoadingIndicator(1500);
       addMessage({ type: 'text', text: "Tudo bem, amor. Deixa pra próxima então. Beijos! 😘" }, 'bot');
       setFlowStep('flow_rejected');
@@ -377,6 +412,17 @@ export default function Home() {
                 </Button>
                 <Button onClick={() => handleCallChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-destructive/90">
                     Ainda não
+                </Button>
+            </div>
+          )}
+
+          {flowStep === 'awaiting_downsell_choice' && (
+             <div className="p-4 bg-background border-t border-border/20 flex items-center justify-center gap-4">
+                <Button onClick={() => handleDownsellChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
+                    Quero por R$ 9,90 agora! 🔥
+                </Button>
+                <Button onClick={() => handleDownsellChoice('no')} className="w-full bg-destructive text-destructive-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-destructive/90">
+                    Não, obrigado
                 </Button>
             </div>
           )}
