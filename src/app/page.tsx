@@ -47,7 +47,8 @@ export const VANESSA_MEDIA = {
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState("Digitando...");
+  const [loadingText, setLoadingText] = useState("digitando...");
+  const [statusText, setStatusText] = useState("online");
   const [autoPlayingAudioId, setAutoPlayingAudioId] = useState<number | null>(null);
   const [showInput, setShowInput] = useState(false);
   const [flowStep, setFlowStep] = useState<FlowStep>('initial');
@@ -105,7 +106,33 @@ export default function Home() {
     return fullMessage;
   };
 
-  const playAudioSequence = async (url: string, waitTime = 1200) => {
+  // SIMULADOR REALISTA DE DIGITAÇÃO DE WHATSAPP
+  const simulateTyping = async (text: string, customDelay?: number) => {
+    const typingDuration = customDelay ?? Math.min(3200, Math.max(1600, text.length * 40));
+    setStatusText("digitando...");
+    setLoadingText("digitando...");
+    setIsLoading(true);
+    await delay(typingDuration);
+    setIsLoading(false);
+    setStatusText("online");
+    addMessage({ type: 'text', text }, 'bot');
+    await delay(800);
+  };
+
+  // SIMULADOR REALISTA DE GRAVAÇÃO DE ÁUDIO NO WHATSAPP
+  const simulateRecording = async (duration = 2400) => {
+    setStatusText("gravando áudio...");
+    setLoadingText("gravando áudio...");
+    setIsLoading(true);
+    await delay(duration);
+    setIsLoading(false);
+    setStatusText("online");
+  };
+
+  const playAudioSequence = async (url: string, waitAfter = 1200) => {
+    // Primeiro simula que ela está segurando o microfone no WhatsApp
+    await simulateRecording(2200);
+
     playNotificationSound();
     await new Promise<void>(resolve => {
       let resolved = false;
@@ -128,7 +155,7 @@ export default function Home() {
       setAutoPlayingAudioId(audioMessage.id);
     });
     setAutoPlayingAudioId(null);
-    await delay(waitTime);
+    await delay(waitAfter);
   };
 
   const playVideoSequence = async (url: string, waitTime = 2000) => {
@@ -145,13 +172,6 @@ export default function Home() {
       setTimeout(safeResolve, 40000);
     });
     await delay(waitTime);
-  };
-  
-  const showLoadingIndicator = async (duration: number, text: string = "Digitando...") => {
-    setLoadingText(text);
-    setIsLoading(true);
-    await delay(duration);
-    setIsLoading(false);
   };
 
   const getCity = async () => {
@@ -172,7 +192,7 @@ export default function Home() {
     }
   };
 
-  // STEP 1: FLUXO DE BOAS-VINDAS COM GEOLOCALIZAÇÃO
+  // STEP 1: FLUXO DE BOAS-VINDAS COM CADÊNCIA REALISTA DE WHATSAPP
   useEffect(() => {
     const runWelcomeFlow = async () => {
       if (isFlowRunning.current) return;
@@ -181,26 +201,30 @@ export default function Home() {
       const currentCity = await getCity();
       setCity(currentCity);
 
-      // Áudio 1: Boas-vindas da Vanessa
-      await showLoadingIndicator(1500, "Gravando áudio...");
-      await playAudioSequence(VANESSA_MEDIA.audio1_boasvindas);
-
-      await delay(800);
-      addMessage({ type: 'image', url: VANESSA_MEDIA.fotoCasual }, 'bot');
+      // Pausa inicial natural como se ela estivesse online abrindo a conversa
       await delay(1200);
 
-      addMessage({ type: 'text', text: "Essa foto eu tirei hoje mais cedo ❤🔥" }, 'bot');
+      // Áudio 1: Boas-vindas da Vanessa
+      await playAudioSequence(VANESSA_MEDIA.audio1_boasvindas, 1000);
 
+      // Foto casual
+      addMessage({ type: 'image', url: VANESSA_MEDIA.fotoCasual }, 'bot');
+      await delay(1500);
+
+      // Digitando a frase da foto com delay proporcional
+      await simulateTyping("Essa foto eu tirei hoje mais cedo ❤🔥", 2000);
       await delay(1000);
+
+      // Digitando a frase da cidade
       const locationText = currentCity === 'do Brasil' ? "aqui no Brasil" : `em ${currentCity}`;
-      addMessage({ type: 'text', text: `E estou morando ${locationText}` }, 'bot');
+      await simulateTyping(`E estou morando ${locationText}...`, 1800);
+      await delay(1000);
 
       // Áudio 2: Pergunta o nome
-      await showLoadingIndicator(1500, "Gravando áudio...");
-      await playAudioSequence(VANESSA_MEDIA.audio2_nome);
+      await playAudioSequence(VANESSA_MEDIA.audio2_nome, 800);
 
-      await delay(800);
-      addMessage({ type: 'text', text: "Qual seu nome, bb? 💗" }, 'bot');
+      // Digita a pergunta do nome
+      await simulateTyping("Qual seu nome, bb? 💗", 1600);
 
       setShowInput(true);
       setFlowStep('awaiting_name');
@@ -212,17 +236,14 @@ export default function Home() {
   }, [isStarted]);
 
   // CRIAÇÃO DE PIX:
-  // - Na entrada: o valor real cobrado na API PushinPay é 999 (R$ 9,99),
-  //   mas no texto e no visual do card exibimos R$ 10,00 conforme alinhado!
-  // - No Upsell: cobrado 1999 (R$ 19,99).
+  // - Entrada: R$ 9,99 na API (999 centavos), exibindo R$ 10,00 no design
+  // - Upsell: R$ 19,99 (1999 centavos)
   const handleCreatePix = async (value: number, isUpsell: boolean = false) => {
     setIsCreatingPix(true);
     if (!isUpsell) {
-      addMessage({ type: 'text', text: "vou mandar meu pix pra você bb... 😍" }, 'bot');
-      await showLoadingIndicator(2000);
+      await simulateTyping("vou mandar meu pix pra você bb... 😍", 1800);
     }
     
-    // value = 999 (R$ 9,99 para a cobrança real na gateway PushinPay)
     const charge = await createPixCharge(value);
     if (charge && charge.pixCopyPaste) {
       fpixelTrack('InitiateCheckout', { value: value / 100, currency: 'BRL' });
@@ -234,50 +255,47 @@ export default function Home() {
         setPixData(charge);
         setFlowStep('awaiting_pix_payment');
         // Visualmente informa R$ 10,00 no texto e no card:
-        addMessage({ type: 'text', text: "Prontinho amor, o valor é só R$ 10,00. Faz o pagamento pra gente começar nossa chamada de vídeo agora... 🔥" }, 'bot');
+        await simulateTyping("Prontinho amor, o valor é só R$ 10,00. Faz o pagamento pra gente começar nossa chamada de vídeo agora... 🔥", 2200);
         addMessage({ type: 'pix', sender: 'bot', pixCopyPaste: charge.pixCopyPaste, value: 10.00 });
       }
     } else {
-      addMessage({ type: 'text', text: "Ops, não consegui gerar o PIX agora, amor. Tenta de novo em um minutinho." }, 'bot');
+      await simulateTyping("Ops, não consegui gerar o PIX agora, amor. Tenta de novo em um minutinho.", 1800);
       setFlowStep(isUpsell ? 'payment_confirmed_awaiting_upsell_choice' : 'awaiting_after_audio_14_response');
       if (!isUpsell) setShowInput(true);
     }
     setIsCreatingPix(false);
   };
 
-  // VERIFICAÇÃO DE PAGAMENTO & ÁUDIO DE OBJEÇÃO CASO NÃO TENHA PAGO
+  // VERIFICAÇÃO DE PAGAMENTO & TRATAMENTO DE OBJEÇÃO
   const handleCheckPayment = async (txId: string, value: number, isUpsell: boolean = false) => {
     if (!txId || isCheckingPayment) return;
 
     addMessage({ type: 'text', text: "Já paguei" }, 'user');
     setIsCheckingPayment(true);
-    await showLoadingIndicator(1500);
-    addMessage({ type: 'text', text: "Ok amor, só um momento que vou verificar... 😍" }, 'bot');
     
-    await delay(7000);
+    // Simula ela lendo e respondendo que vai checar
+    await delay(1200);
+    await simulateTyping("Ok amor, só um momento que vou verificar... 😍", 1600);
+    
+    await delay(6000);
 
     const result = await checkPaymentStatus(txId);
 
     if (result?.status === 'paid') {
       fpixelTrack('Purchase', { value: value / 100, currency: 'BRL' });
       if (isUpsell) {
-        addMessage({ type: 'text', text: "Pagamento confirmado, gostoso! 🔥 Clica no botão abaixo pra gente conversar no WhatsApp agora mesmo!" }, 'bot');
+        await simulateTyping("Pagamento confirmado, gostoso! 🔥 Clica no botão abaixo pra gente conversar no WhatsApp agora mesmo!", 2400);
         setFlowStep('upsell_payment_confirmed');
       } else {
         // Áudio 8: Upsell liberando o WhatsApp
-        await showLoadingIndicator(2000, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio8_upsell);
-        addMessage({ type: 'text', text: "Amor, acabei de liberar meu número pessoal pra você... Quer pagar só mais R$ 19,99 pra gente conversar por lá? 😏" }, 'bot');
+        await playAudioSequence(VANESSA_MEDIA.audio8_upsell, 1000);
+        await simulateTyping("Amor, acabei de liberar meu número pessoal pra você... Quer pagar só mais R$ 19,99 pra gente conversar por lá? 😏", 2500);
         setFlowStep('payment_confirmed_awaiting_upsell_choice');
       }
     } else {
-      // Áudio 7: Objeção quando clicou em 'Já paguei' mas ainda não compensou
-      await showLoadingIndicator(2000, "Gravando áudio...");
-      await playAudioSequence(VANESSA_MEDIA.audio7_objecao);
-      addMessage({ 
-        type: 'text', 
-        text: "Amor, ainda não constou aqui no meu banco... Confere no seu aplicativo se o Pix foi concluído certinho que eu já tô prontinha te esperando! 🥺" 
-      }, 'bot');
+      // Áudio 7: Objeção caso ainda não tenha compensado
+      await playAudioSequence(VANESSA_MEDIA.audio7_objecao, 1000);
+      await simulateTyping("Amor, ainda não constou aqui no meu banco... Confere no seu aplicativo se o Pix foi concluído certinho que eu já tô prontinha te esperando! 🥺", 2600);
     }
     setIsCheckingPayment(false);
   };
@@ -287,19 +305,19 @@ export default function Home() {
     if (choice === 'yes') {
       addMessage({ type: 'text', text: 'Sim, eu quero!' }, 'user');
       setIsCreatingPix(true);
-      await showLoadingIndicator(1500);
-      addMessage({ type: 'text', text: 'Oba! Sabia que você ia querer, amor. Vou gerar o PIX de R$19,99 pra você.' }, 'bot');
+      await delay(1000);
+      await simulateTyping("Oba! Sabia que você ia querer, amor. Vou gerar o PIX de R$19,99 pra você.", 2000);
       await handleCreatePix(1999, true);
       setIsCreatingPix(false);
     } else {
       addMessage({ type: 'text', text: 'Não, obrigado' }, 'user');
-      await showLoadingIndicator(1500);
-      addMessage({ type: 'text', text: 'Tudo bem, amor. Sem problemas! Clica no botão abaixo pra gente começar nossa chamada de vídeo agora. 😍' }, 'bot');
+      await delay(1000);
+      await simulateTyping("Tudo bem, amor. Sem problemas! Clica no botão abaixo pra gente começar nossa chamada de vídeo agora. 😍", 2200);
       setFlowStep('flow_complete_video_only');
     }
   };
 
-  // GERENCIADOR DE RESPOSTAS DO USUÁRIO
+  // GERENCIADOR DE RESPOSTAS DO USUÁRIO (CADÊNCIA NATURAL DE CONVERSA)
   const formAction = async (formData: FormData) => {
     const userMessageText = formData.get("message") as string;
     if (!userMessageText.trim()) return;
@@ -308,72 +326,77 @@ export default function Home() {
     setShowInput(false);
 
     switch (flowStep) {
-      // 1. Recebeu o nome do lead
+      // 1. Recebeu o nome do lead -> Lê o nome e pergunta se pode chamar de amor
       case 'awaiting_name':
         setUserName(userMessageText);
-        await delay(1200);
-        await showLoadingIndicator(1800);
-        addMessage({ type: 'text', text: `Adorei seu nome ${userMessageText}, 💗 posso te chamar de amor?` }, 'bot');
+        // Pausa como se estivesse lendo
+        await delay(1400);
+        await simulateTyping(`Adorei seu nome ${userMessageText}, 💗 posso te chamar de amor?`, 2200);
         setFlowStep('awaiting_amor_permission');
         setShowInput(true);
         break;
 
-      // 2. Recebeu permissão de chamar de amor -> Áudio 3 de permissão
+      // 2. Recebeu permissão de chamar de amor -> Grava Áudio 3 e pede permissão da foto
       case 'awaiting_amor_permission':
-        await delay(1000);
-        await showLoadingIndicator(1800, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio3_permissao);
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "Acho que vai gostar rsrs , posso mandar ?" }, 'bot');
+        await delay(1200);
+        await playAudioSequence(VANESSA_MEDIA.audio3_permissao, 1000);
+        await simulateTyping("Acho que vai gostar rsrs , posso mandar ?", 1800);
         setFlowStep('awaiting_after_gostar_response');
         setShowInput(true);
         break;
 
-      // 3. Recebeu autorização para mandar a foto sensual
+      // 3. Recebeu permissão para mandar a foto sensual
       case 'awaiting_after_gostar_response':
         await delay(1000);
-        await showLoadingIndicator(1800);
         addMessage({ type: 'image', url: VANESSA_MEDIA.fotoSensual }, 'bot');
-        await delay(1200);
-        await showLoadingIndicator(1500);
-        addMessage({ type: 'text', text: "O que você achou bb??" }, 'bot');
+        // Dá 2 segundos para o lead ver a foto antes de ela perguntar
+        await delay(2000);
+        await simulateTyping("O que você achou bb??", 1600);
         setFlowStep('awaiting_after_picante_response');
         setShowInput(true);
         break;
 
       // 4. Recebeu o elogio da foto sensual -> Áudio 4 de lingerie + Foto Íntima + Vídeo + Áudio 5 de chamada
       case 'awaiting_after_picante_response':
-        await delay(1000);
-        await showLoadingIndicator(1800, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio4_lingerie);
-        await delay(1000);
-        await showLoadingIndicator(1800);
-        addMessage({ type: 'image', url: VANESSA_MEDIA.fotoIntima }, 'bot');
         await delay(1200);
+        await playAudioSequence(VANESSA_MEDIA.audio4_lingerie, 1200);
+        
+        // Manda a foto íntima
+        addMessage({ type: 'image', url: VANESSA_MEDIA.fotoIntima }, 'bot');
+        await delay(1800);
+
+        // Manda o vídeo teaser e aguarda terminar
         await playVideoSequence(VANESSA_MEDIA.videoTeaser, 2000);
-        await showLoadingIndicator(1800, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio5_chamada);
-        await showLoadingIndicator(1200);
-        addMessage({ type: 'text', text: "eae bb bora chamadinha então ? 🔥" }, 'bot');
+
+        // Áudio 5: Convite para chamada ao vivo
+        await playAudioSequence(VANESSA_MEDIA.audio5_chamada, 1000);
+        await simulateTyping("eae bb bora chamadinha então ? 🔥", 1800);
+
         setFlowStep('awaiting_after_audio_14_response');
         setShowInput(true);
         break;
 
       // 5. Aceitou a chamadinha -> Áudio 6 falando dos 10 reais e GERA PIX DE R$ 9,99 (visual R$ 10,00)
       case 'awaiting_after_audio_14_response':
-        await delay(1000);
-        await showLoadingIndicator(2000, "Gravando áudio...");
-        await playAudioSequence(VANESSA_MEDIA.audio6_pix);
-        await handleCreatePix(999); // Cobra R$ 9,99 na gateway PushinPay
+        await delay(1200);
+        await playAudioSequence(VANESSA_MEDIA.audio6_pix, 1200);
+        await handleCreatePix(999);
         break;
 
       case 'chat_mode':
         try {
-          await showLoadingIndicator(1500);
+          await delay(1000);
+          setStatusText("digitando...");
+          setLoadingText("digitando...");
+          setIsLoading(true);
           const { response } = await sendMessage(userMessageText);
+          setIsLoading(false);
+          setStatusText("online");
           addMessage({ type: 'text', text: response }, 'bot');
         } catch (error) {
           console.error(error);
+          setIsLoading(false);
+          setStatusText("online");
           addMessage({ type: 'text', text: "Desculpe, ocorreu um erro ao processar sua mensagem." }, 'bot');
         }
         setShowInput(true);
@@ -408,7 +431,8 @@ export default function Home() {
           </div>
         )}
 
-        <ChatHeader />
+        {/* HEADER COM STATUS DINÂMICO (ONLINE / DIGITANDO... / GRAVANDO ÁUDIO...) */}
+        <ChatHeader statusText={statusText} />
         
         <div 
           className="flex-1 min-h-0 overflow-y-auto"
@@ -418,7 +442,12 @@ export default function Home() {
             backgroundPosition: 'center',
           }}
         >
-          <ChatMessages messages={messages} isLoading={isLoading} loadingText={loadingText} autoPlayingAudioId={autoPlayingAudioId} />
+          <ChatMessages 
+            messages={messages} 
+            isLoading={isLoading} 
+            loadingText={loadingText} 
+            autoPlayingAudioId={autoPlayingAudioId} 
+          />
         </div>
 
         {/* BARRA DE AGUARDANDO PAGAMENTO COM BOTAO JÁ PAGUEI */}
