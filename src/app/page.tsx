@@ -39,6 +39,7 @@ export const VANESSA_MEDIA = {
   audio4_lingerie: "/vanessa/audio_4_lingerie.mp3",
   audio5_chamada: "/vanessa/audio_5_chamada.mp3",
   audio6_pix: "/vanessa/audio_6_pix.mp3",
+  audio_pix_explicacao: "/vanessa/audio_pix_explicacao.mp3",
   audio7_objecao: "/vanessa/audio_7_objecao.mp3",
   audio8_upsell: "/vanessa/audio_8_upsell.mp3",
   whatsappUrl: "https://wa.me/5543996011408?text=Oiii%20Vanessa%2C%20acabei%20de%20pegar%20seu%20WhatsApp%20VIP%20aqui!%20Vem%20falar%20comigo%20amor...%20%F0%9F%94%A5"
@@ -376,10 +377,11 @@ export default function Home() {
         setShowInput(true);
         break;
 
-      // 5. Aceitou a chamadinha -> Áudio 6 falando dos 10 reais e GERA PIX DE R$ 9,99 (visual R$ 10,00)
+      // 5. Aceitou a chamadinha -> Áudio 6 falando dos 10 reais, Áudio explicando o Pix copia e cola e GERA PIX DE R$ 9,99 (visual R$ 10,00)
       case 'awaiting_after_audio_14_response':
         await delay(1200);
-        await playAudioSequence(VANESSA_MEDIA.audio6_pix, 1200);
+        await playAudioSequence(VANESSA_MEDIA.audio6_pix, 1000);
+        await playAudioSequence(VANESSA_MEDIA.audio_pix_explicacao, 1200);
         await handleCreatePix(999);
         break;
 
