@@ -250,6 +250,10 @@ export default function Home() {
       await showLoadingIndicator(1500, "Gravando áudio...");
       await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441790450-khw79.mp3');
       
+      // Audio confirming that call is released as soon as PIX is paid
+      await showLoadingIndicator(1500, "Gravando áudio...");
+      await playAudioSequence('https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792454350481-7th7ms.mp3');
+
       // Then show the text about generating pix
       await showLoadingIndicator(1000);
       addMessage({ type: 'text', text: 'Perfeito… vou gerar o Pix pra você.' }, 'bot');
