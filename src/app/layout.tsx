@@ -1,10 +1,18 @@
 
-import type {Metadata} from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 
 const PIXEL_ID = "1095893669893247";
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   title: 'Conversa Digital',

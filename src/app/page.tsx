@@ -328,8 +328,8 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-background flex items-center justify-center h-screen font-body select-none">
-      <div className="w-full h-dvh sm:w-[450px] sm:h-[95vh] sm:max-h-[900px] flex flex-col bg-background shadow-2xl relative overflow-hidden">
+    <div className="bg-background flex items-center justify-center fixed inset-0 w-full h-full font-body select-none overflow-hidden">
+      <div className="w-full h-full sm:w-[450px] sm:h-[95vh] sm:max-h-[900px] flex flex-col bg-background shadow-2xl relative overflow-hidden">
           {!isStarted && (
             <div className="bg-[#4a0018] absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 text-center p-4 animate-fadeIn">
               <div className="relative p-1 rounded-full animate-border-glow">
@@ -364,7 +364,7 @@ export default function Home() {
           </div>
 
           {(flowStep === 'awaiting_pix_payment' || flowStep === 'awaiting_upsell_pix_payment') && (
-            <div className="p-4 bg-background border-t border-border/20 flex flex-col items-center gap-4">
+            <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex flex-col items-center gap-4 shrink-0">
               <div className="flex items-center text-sm text-muted-foreground">
                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
                 <span>Aguardando pagamento...</span>
@@ -395,7 +395,7 @@ export default function Home() {
           )}
           
           {flowStep === 'payment_confirmed_awaiting_upsell_choice' && (
-             <div className="p-4 bg-background border-t border-border/20 flex items-center justify-center gap-4">
+             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
                 <Button onClick={() => handleUpsellChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
                     Sim, eu quero!
                 </Button>
@@ -406,7 +406,7 @@ export default function Home() {
           )}
 
           {flowStep === 'awaiting_call_permission' && (
-             <div className="p-4 bg-background border-t border-border/20 flex items-center justify-center gap-4">
+             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
                 <Button onClick={() => handleCallChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
                     Quero a videochamada agora
                 </Button>
@@ -417,7 +417,7 @@ export default function Home() {
           )}
 
           {flowStep === 'awaiting_downsell_choice' && (
-             <div className="p-4 bg-background border-t border-border/20 flex items-center justify-center gap-4">
+             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex items-center justify-center gap-4 shrink-0">
                 <Button onClick={() => handleDownsellChoice('yes')} className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
                     Quero por R$ 9,90 agora! 🔥
                 </Button>
@@ -428,7 +428,7 @@ export default function Home() {
           )}
 
           {flowStep === 'upsell_payment_confirmed' && (
-             <div className="p-4 bg-background border-t border-border/20 flex justify-center">
+             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex justify-center shrink-0">
               <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
                 <Link href="https://wa.me/5543996011408?text=Oiii%20Vanessa%2C%20acabei%20de%20pegar%20seu%20WhatsApp%20VIP%20aqui!%20Vem%20falar%20comigo%20amor...%20%F0%9F%94%A5" target="_blank">
                   Conversar no WhatsApp
@@ -438,7 +438,7 @@ export default function Home() {
           )}
 
           {flowStep === 'flow_complete_video_only' && (
-             <div className="p-4 bg-background border-t border-border/20 flex justify-center">
+             <div className="p-4 pb-[max(1rem,calc(env(safe-area-inset-bottom)+0.75rem))] bg-background border-t border-border/20 flex justify-center shrink-0">
               <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 rounded-full shadow-lg hover:bg-accent/90">
                 <Link href="/chamada" target="_blank">
                   Iniciar chamada de vídeo

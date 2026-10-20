@@ -23,7 +23,7 @@ export default function ChatInput({ formAction, disabled }: ChatInputProps) {
   }
 
   return (
-    <div className="flex items-center p-2.5 bg-background border-t border-border/20 shrink-0">
+    <div className="flex items-center p-2.5 pb-[max(0.75rem,calc(env(safe-area-inset-bottom)+0.5rem))] bg-background border-t border-border/20 shrink-0">
       <form ref={formRef} action={handleFormSubmit} className="flex-grow flex items-center gap-2.5">
         <div className="flex-grow bg-white rounded-full flex items-center px-4 shadow-lg ring-1 ring-primary/50 shadow-primary/30">
           <button type="button" aria-label="Emoji">
