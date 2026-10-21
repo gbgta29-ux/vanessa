@@ -2,20 +2,21 @@ const CONFIG = {
     API_URL: "https://api.pushinpay.com.br/api/pix/cashIn",
     API_TOKEN: "Bearer 61191|v8sG2IivZ9bJ0gC2oOdeUaAaNcasT8lgmp1f2Dqb6572cc0c",
     IMAGES: [
-        "https://playblog.ws/play/wp-content/uploads/2018/06/Buceta-rosada-05.jpg",
-        "https://playblog.ws/play/wp-content/uploads/2018/06/Buceta-rosada-08.jpg"
+        "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg",
+        "https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg"
     ],
-    AUDIO: "https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/ope5n4r6qwn_1769542058281.mp3",
+    AUDIO: "audio_upsell.mp3",
     VIDEO: "video_chamada.mp4",
     MEGA_LINK: "https://mega.nz/folder/cC9FSDTY#4xZVUGWduRHouSdNDNpsuw/folder/UG80WSRBn"
 };
 
 const STATE = {
-    hasPaidGeneric: false, // Tracks if they bought the photos/videos
-    callDuration: 0
+    hasPaidGeneric: false,
+    callDuration: 0,
+    isMuted: false,
+    isCameraOn: true
 };
 
-// --- DOM Elements ---
 // --- DOM Elements ---
 let screens = {};
 let paymentModal, audioPlayer, remoteVideo, localVideo;
@@ -34,7 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
     remoteVideo = document.getElementById('remote-video');
     localVideo = document.getElementById('local-video');
 
-    console.log("DOM Loaded, elements initialized");
+    // Pre-carrega o vídeo para iniciar instantaneamente
+    if (remoteVideo) {
+        remoteVideo.src = CONFIG.VIDEO;
+        remoteVideo.load();
+    }
+
+    console.log("DOM Loaded, Vanessa Call initialized");
 });
 
 // --- Navigation ---
@@ -48,12 +55,10 @@ function showScreen(screenName) {
         screens[screenName].classList.add('active');
     } else {
         console.error("Screen not found:", screenName);
-        alert("Erro interno: Tela não encontrada (" + screenName + ")");
     }
 }
 
 // --- Logic ---
-
 function startExperience() {
     if (window.OneSignalDeferred) {
         window.OneSignalDeferred.push(async function(OneSignal) {
@@ -66,28 +71,28 @@ function startExperience() {
     }
 
     showScreen('upsell');
-    // Attempt play
-    audioPlayer.play().catch(e => console.log("Audio autoplay blocked, user interaction needed next time"));
+    if (audioPlayer) {
+        audioPlayer.play().catch(e => console.log("Audio autoplay aguardando interação:", e));
+    }
 }
 
 function acceptUpsell() {
-    audioPlayer.pause(); // Stop audio
-    processPayment(989, "Pack 100 Fotos + Vídeos")
+    if (audioPlayer) audioPlayer.pause();
+    processPayment(989, "Pack 100 Fotos + Vídeos da Vanessa")
         .then(() => {
             STATE.hasPaidGeneric = true;
-            // Immediate Start, Album Access at end
             alert("Pagamento Confirmado! O álbum estará disponível no final da chamada.");
             startVideoCall();
         });
 }
 
 function declineUpsell() {
-    audioPlayer.pause(); // Stop audio
+    if (audioPlayer) audioPlayer.pause();
     showScreen('downsell');
 }
 
 function acceptDownsell() {
-    processPayment(500, "Desconto Pack Fotos")
+    processPayment(500, "Desconto Pack Fotos da Vanessa")
         .then(() => {
             STATE.hasPaidGeneric = true;
             alert("Pagamento Confirmado! O álbum estará disponível no final da chamada.");
@@ -95,47 +100,91 @@ function acceptDownsell() {
         });
 }
 
-function showMegaLink() {
-    // Legacy generic function, now handled by end screen logic
-}
-
 function startVideoCall() {
-    audioPlayer.pause(); // Ensure audio is stopped
-    audioPlayer.currentTime = 0;
+    if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+    }
 
     showScreen('video');
 
-    // Start Main Video
-    remoteVideo.src = CONFIG.VIDEO;
-    remoteVideo.play();
-    remoteVideo.loop = true;
+    if (remoteVideo) {
+        remoteVideo.setAttribute('playsinline', '');
+        remoteVideo.setAttribute('webkit-playsinline', '');
+        if (!remoteVideo.src || !remoteVideo.src.includes(CONFIG.VIDEO)) {
+            remoteVideo.src = CONFIG.VIDEO;
+        }
+        remoteVideo.loop = true;
 
-    // Start Webcam
-    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        .then(stream => {
-            localVideo.srcObject = stream;
-        })
-        .catch(err => {
-            console.error("Camera access denied:", err);
-            localVideo.style.display = 'none'; // Hide if failed
-        });
+        // Tenta iniciar com som
+        const playPromise = remoteVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(err => {
+                console.warn("Autoplay com som bloqueado pelo navegador mobile. Iniciando em mute como fallback:", err);
+                remoteVideo.muted = true;
+                STATE.isMuted = true;
+                updateSoundIcon(false);
+                remoteVideo.play().catch(e => console.error("Erro fatal ao dar play no vídeo:", e));
+            });
+        }
+    }
+
+    // Start Webcam (opcional, simulação de câmera frontal)
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(stream => {
+                if (localVideo) {
+                    localVideo.srcObject = stream;
+                    localVideo.style.display = 'block';
+                }
+            })
+            .catch(err => {
+                console.log("Câmera do usuário não concedida:", err);
+                if (localVideo) localVideo.style.display = 'none';
+            });
+    } else {
+        if (localVideo) localVideo.style.display = 'none';
+    }
+}
+
+function toggleAudio() {
+    if (!remoteVideo) return;
+    remoteVideo.muted = !remoteVideo.muted;
+    STATE.isMuted = remoteVideo.muted;
+    updateSoundIcon(!remoteVideo.muted);
+}
+
+function updateSoundIcon(hasSound) {
+    const icon = document.getElementById('icon-sound');
+    if (icon) {
+        icon.innerText = hasSound ? 'volume_up' : 'volume_off';
+        icon.style.color = hasSound ? '#10b981' : '#ef4444';
+    }
+}
+
+function toggleCamera() {
+    if (!localVideo) return;
+    STATE.isCameraOn = !STATE.isCameraOn;
+    localVideo.style.display = STATE.isCameraOn ? 'block' : 'none';
 }
 
 function endCall() {
-    remoteVideo.pause();
-    // Stop webcam
-    if (localVideo.srcObject) {
+    if (remoteVideo) remoteVideo.pause();
+    if (localVideo && localVideo.srcObject) {
         localVideo.srcObject.getTracks().forEach(track => track.stop());
     }
     showScreen('postcall');
 
-    // Auto-play WhatsApp offer
+    // Auto-play áudio de encerramento da proposta de WhatsApp
     const waAudio = document.getElementById('whatsapp-audio');
-    if (waAudio) waAudio.play().catch(e => console.log("Autoplay blocked"));
+    if (waAudio) {
+        waAudio.play().catch(e => console.log("Postcall audio aguardando toque:", e));
+    }
 
-    // Show Album Access if paid
+    // Mostra acesso ao álbum se comprou o upsell
     if (STATE.hasPaidGeneric) {
-        document.getElementById('album-access-area').style.display = 'block';
+        const albumArea = document.getElementById('album-access-area');
+        if (albumArea) albumArea.style.display = 'block';
     }
 }
 
@@ -147,32 +196,37 @@ function acceptWhatsAppUpsell() {
 }
 
 function showWhatsAppDownsell() {
-    document.getElementById('btn-buy-whatsapp').style.display = 'none';
-    document.getElementById('whatsapp-refusal').style.display = 'none';
-    document.getElementById('whatsapp-downsell').style.display = 'block';
+    const buyBtn = document.getElementById('btn-buy-whatsapp');
+    const refText = document.getElementById('whatsapp-refusal');
+    const downsell = document.getElementById('whatsapp-downsell');
+
+    if (buyBtn) buyBtn.style.display = 'none';
+    if (refText) refText.style.display = 'none';
+    if (downsell) downsell.style.display = 'block';
 }
 
 function acceptWhatsAppDownsell() {
-    processPayment(500, "WhatsApp (Desconto)")
+    processPayment(500, "WhatsApp (Desconto da Vanessa)")
         .then(() => {
             unlockWhatsApp();
         });
 }
 
 function unlockWhatsApp() {
-    // Hide offer/downsell interfaces, show Access button
-    document.getElementById('btn-buy-whatsapp').style.display = 'none';
-    document.getElementById('whatsapp-refusal').style.display = 'none';
-    document.getElementById('whatsapp-downsell').style.display = 'none';
+    const buyBtn = document.getElementById('btn-buy-whatsapp');
+    const refText = document.getElementById('whatsapp-refusal');
+    const downsell = document.getElementById('whatsapp-downsell');
+    const accessBtn = document.getElementById('btn-access-whatsapp');
 
-    document.getElementById('btn-access-whatsapp').style.display = 'flex';
+    if (buyBtn) buyBtn.style.display = 'none';
+    if (refText) refText.style.display = 'none';
+    if (downsell) downsell.style.display = 'none';
+    if (accessBtn) accessBtn.style.display = 'flex';
 }
 
-// --- Payment System ---
-
+// --- Payment System (PushinPay) ---
 function processPayment(amountCents, description) {
     return new Promise((resolve, reject) => {
-        // Show Modal
         paymentModal.style.display = 'flex';
         const qrImg = document.getElementById('pay-qr');
         const codeText = document.getElementById('pay-code');
@@ -180,7 +234,6 @@ function processPayment(amountCents, description) {
         const copyBtn = document.getElementById('btn-copy');
         const confirmBtn = document.getElementById('btn-confirm-pay');
 
-        // Reset Modal UI
         qrImg.src = '';
         codeText.value = 'Gerando...';
         statusText.innerText = `Gerando Cobrança: ${description}`;
@@ -189,7 +242,6 @@ function processPayment(amountCents, description) {
         confirmBtn.innerText = "Já Fiz o Pagamento";
         confirmBtn.disabled = false;
 
-        // 1. Call API
         fetch(CONFIG.API_URL, {
             method: 'POST',
             headers: {
@@ -210,7 +262,7 @@ function processPayment(amountCents, description) {
                         window.fbq('track', 'InitiateCheckout', { value: checkoutVal, currency: 'BRL' });
                         console.log('[Pixel] InitiateCheckout tracked:', { value: checkoutVal, currency: 'BRL' });
                     }
-                    const transactionId = data.id; // Capture ID
+                    const transactionId = data.id;
 
                     qrImg.src = data.qr_code_base64;
                     qrImg.style.display = 'block';
@@ -220,19 +272,16 @@ function processPayment(amountCents, description) {
                     confirmBtn.disabled = false;
                     confirmBtn.innerText = "Já Fiz o Pagamento";
 
-                    // Start Polling (Every 5 seconds)
                     const pollInterval = setInterval(() => {
                         checkPaymentStatus(transactionId, resolve, confirmBtn, statusText, pollInterval, true, amountCents);
                     }, 5000);
 
-                    // Copy logic
                     copyBtn.onclick = () => {
                         navigator.clipboard.writeText(data.qr_code);
                         copyBtn.innerText = "Copiado!";
                         setTimeout(() => copyBtn.innerText = "Copiar", 2000);
                     };
 
-                    // Manual Confirm logic
                     confirmBtn.onclick = () => {
                         checkPaymentStatus(transactionId, resolve, confirmBtn, statusText, pollInterval, false, amountCents);
                     };
@@ -250,7 +299,6 @@ function processPayment(amountCents, description) {
 function checkPaymentStatus(txId, resolveCallback, btn, statusLabel, intervalId, isPolling = false, amountCents = 0) {
     if (!txId) return;
 
-    // Visual feedback only if manually clicked
     if (btn && !isPolling) btn.innerText = "Verificando...";
 
     fetch(`https://api.pushinpay.com.br/api/transactions/${txId}`, {
@@ -269,7 +317,7 @@ function checkPaymentStatus(txId, resolveCallback, btn, statusLabel, intervalId,
                     window.fbq('track', 'Purchase', { value: purchaseValue, currency: 'BRL' });
                     console.log('[Pixel] Purchase tracked:', { value: purchaseValue, currency: 'BRL' });
                 }
-                clearInterval(intervalId); // Stop polling
+                clearInterval(intervalId);
 
                 if (btn) {
                     btn.innerText = "Pagamento Aprovado!";
@@ -282,16 +330,12 @@ function checkPaymentStatus(txId, resolveCallback, btn, statusLabel, intervalId,
                     resolveCallback(true);
                 }, 1000);
             } else {
-                // Still pending
                 console.log("Status atual:", data.status);
-
-                // Only alert/update UI if it was a manual click, not automatic polling
                 if (btn && !isPolling) {
-                    btn.innerText = "Já Fiz o Pagamento"; // Reset button text
+                    btn.innerText = "Já Fiz o Pagamento";
                     btn.disabled = false;
-
-                    alert("Pagamento não identificado. Por favor, aguarde alguns instantes ou tente novamente.");
-                    statusLabel.innerText = "Pagamento não identificado.";
+                    alert("Pagamento não identificado ainda. Aguarde alguns instantes e tente novamente.");
+                    statusLabel.innerText = "Aguardando confirmação...";
                 }
             }
         })

@@ -22,7 +22,7 @@
                                 type: "push",
                                 autoPrompt: true,
                                 text: {
-                                    actionMessage: "Clique em permitir para fazer a chamadinha com ela",
+                                    actionMessage: "Clique em permitir para fazer a chamadinha com a Vanessa",
                                     acceptButton: "Permitir",
                                     cancelButton: "Agora não"
                                 }
@@ -39,7 +39,7 @@
                             {
                                 type: "push",
                                 text: {
-                                    actionMessage: "Clique em permitir para fazer a chamadinha com ela",
+                                    actionMessage: "Clique em permitir para fazer a chamadinha com a Vanessa",
                                     acceptButton: "Permitir",
                                     cancelButton: "Agora não"
                                 }
@@ -97,16 +97,14 @@
                 <span style="font-size: 0.8rem; color: #a1a1aa;">Áudio da Vanessa</span>
             </div>
 
-            <audio id="offer-audio"
-                src="https://gvdtvgefzbxunjrtzrdw.supabase.co/storage/v1/object/public/media/ope5n4r6qwn_1769542058281.mp3">
-            </audio>
+            <audio id="offer-audio" src="audio_upsell.mp3"></audio>
 
             <h2 style="margin-bottom: 15px;">Antes de começarmos...</h2>
-            <p style="color: #a1a1aa; font-size: 0.9rem;">Tenho uma proposta indecente pra você.</p>
+            <p style="color: #a1a1aa; font-size: 0.9rem;">Tenho uma proposta especial pra você.</p>
 
             <div class="preview-grid">
-                <img src="https://playblog.ws/play/wp-content/uploads/2018/06/Buceta-rosada-05.jpg" class="preview-img">
-                <img src="https://playblog.ws/play/wp-content/uploads/2018/06/Buceta-rosada-08.jpg" class="preview-img">
+                <img src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792440532240-pumwurh.jpg" class="preview-img" alt="Foto Vanessa 1">
+                <img src="https://vootlkuyzwzvpxcfkfzk.supabase.co/storage/v1/object/public/public-files/1792441916294-1kp2rp.jpg" class="preview-img" alt="Foto Vanessa 2">
             </div>
 
             <div style="margin-top: 20px;">
@@ -143,15 +141,20 @@
     <!-- SCENE 4: Video Call -->
     <div id="video-screen" class="screen">
         <div class="video-container">
-            <video id="remote-video" playsinline webkit-playsinline></video>
+            <video id="remote-video" playsinline webkit-playsinline preload="auto"></video>
             <video id="local-video" autoplay playsinline muted></video>
 
             <div class="call-controls">
-                <!-- Fake Controls for realism -->
-                <button class="control-btn"><span class="material-icons" style="color: white;">mic</span></button>
-                <button class="control-btn btn-end" onclick="endCall()"><span class="material-icons"
-                        style="color: white;">call_end</span></button>
-                <button class="control-btn"><span class="material-icons" style="color: white;">videocam</span></button>
+                <!-- Controls -->
+                <button class="control-btn" id="btn-unmute" onclick="toggleAudio()" title="Ativar Som">
+                    <span class="material-icons" id="icon-sound" style="color: white;">volume_up</span>
+                </button>
+                <button class="control-btn btn-end" onclick="endCall()" title="Encerrar Chamada">
+                    <span class="material-icons" style="color: white;">call_end</span>
+                </button>
+                <button class="control-btn" onclick="toggleCamera()" title="Câmera">
+                    <span class="material-icons" style="color: white;">videocam</span>
+                </button>
             </div>
         </div>
     </div>
@@ -168,7 +171,7 @@
                     <span style="font-size: 0.8rem; color: #a1a1aa;">Ouvir Proposta</span>
                 </div>
                 <audio id="whatsapp-audio" controls style="width: 100%; margin-bottom: 15px;"
-                    src="https://kdloteojnkcjblhoirea.supabase.co/storage/v1/object/public/public-files/0.5085075187246886.mp3">
+                    src="audio_chamada.mp3">
                 </audio>
 
                 <button id="btn-buy-whatsapp" class="btn btn-primary" onclick="acceptWhatsAppUpsell()">
@@ -204,7 +207,7 @@
 
             <!-- Album Access (If bought) -->
             <div id="album-access-area" style="display: none; margin-bottom: 20px;">
-                <h3 style="color: var(--success); margin-bottom: 10px;">Seu Pack de Fotos</h3>
+                <h3 style="color: var(--success); margin-bottom: 10px;">Seu Pack de Fotos da Vanessa</h3>
                 <a href="https://mega.nz/folder/cC9FSDTY#4xZVUGWduRHouSdNDNpsuw/folder/UG80WSRBn" target="_blank"
                     class="btn btn-secondary"
                     style="background: #ffffff20; color: white; border: 1px solid white; text-decoration: none; display: flex; align-items: center; justify-content: center;">
