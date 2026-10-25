@@ -42,7 +42,8 @@ export const VANESSA_MEDIA = {
   audio_pix_explicacao: "/vanessa/audio_pix_explicacao.mp3",
   audio7_objecao: "/vanessa/audio_7_objecao.mp3",
   audio8_upsell: "/vanessa/audio_8_upsell.mp3",
-  whatsappUrl: "https://wa.me/5543996011408?text=Oiii%20Vanessa%2C%20acabei%20de%20pegar%20seu%20WhatsApp%20VIP%20aqui!%20Vem%20falar%20comigo%20amor...%20%F0%9F%94%A5"
+  whatsappUrl: "https://wa.me/5543996011408?text=Oiii%20Vanessa%2C%20acabei%20de%20pegar%20seu%20WhatsApp%20VIP%20aqui!%20Vem%20falar%20comigo%20amor...%20%F0%9F%94%A5",
+  chamadaUrl: "https://lucent-wisp-91871c.netlify.app"
 };
 
 export default function Home() {
@@ -511,7 +512,7 @@ export default function Home() {
         {flowStep === 'flow_complete_video_only' && (
           <div className="p-3.5 pb-8 sm:pb-4 bg-background border-t border-border/20 flex justify-center shrink-0">
             <Button asChild className="w-full bg-accent text-accent-foreground font-bold text-sm sm:text-base py-3.5 sm:py-4 rounded-full shadow-lg min-h-[46px] hover:bg-accent/90">
-              <Link href="/chamada" target="_blank">
+              <Link href={VANESSA_MEDIA.chamadaUrl} target="_blank">
                 Iniciar chamada de vídeo
               </Link>
             </Button>
